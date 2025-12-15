@@ -11,7 +11,6 @@ const serviceCategorySchema = new mongoose.Schema(
     },
     slug: {
       type: String,
-      required: true,
       unique: true,
       lowercase: true,
     },
@@ -42,9 +41,9 @@ const serviceCategorySchema = new mongoose.Schema(
 serviceCategorySchema.index({ name: 'text', description: 'text' });
 serviceCategorySchema.index({ slug: 1 });
 
-// Pré-save middleware pour générer le slug
-serviceCategorySchema.pre('save', function (next) {
-  if (this.isModified('name') && !this.slug) {
+// Pré-validate middleware pour générer le slug
+serviceCategorySchema.pre('validate', function (next) {
+  if (this.name && !this.slug) {
     this.slug = this.name
       .toLowerCase()
       .replace(/[^a-zA-Z0-9\s]/g, '')

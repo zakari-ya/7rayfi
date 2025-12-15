@@ -1,8 +1,8 @@
 require('dotenv').config({ path: '../.env' });
 const mongoose = require('mongoose');
-const ServiceCategory = require('./models/ServiceCategory');
-const Artisan = require('./models/Artisan');
-const ClientRequest = require('./models/ClientRequest');
+const ServiceCategory = require('../models/ServiceCategory');
+const Artisan = require('../models/Artisan');
+const ClientRequest = require('../models/ClientRequest');
 
 // Données de test pour les catégories de services
 const serviceCategoriesData = [
@@ -263,7 +263,12 @@ async function seedDatabase() {
 
     // Insérer les catégories de services
     console.log('📂 Insertion des catégories de services...');
-    const categories = await ServiceCategory.insertMany(serviceCategoriesData);
+    const categories = [];
+    for (const catData of serviceCategoriesData) {
+      const category = new ServiceCategory(catData);
+      await category.save();
+      categories.push(category);
+    }
     console.log(`✅ ${categories.length} catégories créées`);
 
     // Associer les catégories aux artisans
