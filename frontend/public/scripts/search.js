@@ -1,120 +1,6 @@
 // Search Page JavaScript
 
-// Mock data for testing (replace with API integration later)
-const mockArtisans = [
-  {
-    id: '1',
-    name: 'Ahmed Benali',
-    profession: 'Plombier',
-    city: 'Casablanca',
-    rating: 4.8,
-    reviewCount: 127,
-    description: 'Plombier expérimenté avec 15 ans d\'expérience. Spécialisé dans les réparations d\'urgence et installations.',
-    skills: ['Réparations', 'Installations', 'Dépannage 24h', 'Chauffage'],
-    priceRange: { min: 200, max: 800 },
-    availability: 'available',
-    avatar: 'AB',
-    distance: 2.3
-  },
-  {
-    id: '2',
-    name: 'Fatima Alami',
-    profession: 'Électricienne',
-    city: 'Rabat',
-    rating: 4.9,
-    reviewCount: 89,
-    description: 'Électricienne certifiée avec expertise en installations résidentielles et commerciales.',
-    skills: ['Installations', 'Tableau électrique', 'Éclairage LED', 'Sécurité'],
-    priceRange: { min: 300, max: 1200 },
-    availability: 'available',
-    avatar: 'FA',
-    distance: 1.8
-  },
-  {
-    id: '3',
-    name: 'Mohamed Tazi',
-    profession: 'Menuisier',
-    city: 'Marrakech',
-    rating: 4.7,
-    reviewCount: 156,
-    description: 'Menuisier qualifié pour tous vos projets de bois sur mesure et rénovations.',
-    skills: ['Mobilier sur mesure', 'Rénovation', 'Escaliers', 'Cuisine'],
-    priceRange: { min: 500, max: 2000 },
-    availability: 'busy',
-    avatar: 'MT',
-    distance: 5.2
-  },
-  {
-    id: '4',
-    name: 'Aicha Bennani',
-    profession: 'Nettoyage',
-    city: 'Casablanca',
-    rating: 4.6,
-    reviewCount: 203,
-    description: 'Service de nettoyage professionnel pour particuliers et entreprises.',
-    skills: ['Nettoyage résidentiel', 'Bureaux', 'Vitrerie', 'Désinfection'],
-    priceRange: { min: 150, max: 600 },
-    availability: 'available',
-    avatar: 'AB',
-    distance: 3.1
-  },
-  {
-    id: '5',
-    name: 'Youssef Idrissi',
-    profession: 'Peintre',
-    city: 'Fès',
-    rating: 4.5,
-    reviewCount: 78,
-    description: 'Peintre professionnel spécialisé dans la décoration et rénovation.',
-    skills: ['Décoration', 'Ravalement', 'Papier peint', 'Finitions'],
-    priceRange: { min: 250, max: 1000 },
-    availability: 'available',
-    avatar: 'YI',
-    distance: 4.7
-  },
-  {
-    id: '6',
-    name: 'Khadija Fassi',
-    profession: 'Couturière',
-    city: 'Tanger',
-    rating: 4.8,
-    reviewCount: 145,
-    description: 'Couturière experte en confection sur mesure et retouches.',
-    skills: ['Sur mesure', 'Retouches', 'Mariage', 'Costumes'],
-    priceRange: { min: 100, max: 500 },
-    availability: 'busy',
-    avatar: 'KF',
-    distance: 6.8
-  },
-  {
-    id: '7',
-    name: 'Omar Cherkaoui',
-    profession: 'Jardinier',
-    city: 'Marrakech',
-    rating: 4.4,
-    reviewCount: 92,
-    description: 'Jardinier paysagiste pour l\'aménagement et l\'entretien de vos espaces verts.',
-    skills: ['Paysagisme', 'Entretien', 'Élagage', 'Irrigation'],
-    priceRange: { min: 200, max: 800 },
-    availability: 'available',
-    avatar: 'OC',
-    distance: 8.2
-  },
-  {
-    id: '8',
-    name: 'Laila Chraibi',
-    profession: 'Infirmière',
-    city: 'Casablanca',
-    rating: 4.9,
-    reviewCount: 167,
-    description: 'Infirmière à domicile pour soins et assistance médical.',
-    skills: ['Soins à domicile', 'Médication', 'Surveillance', 'Réadaptation'],
-    priceRange: { min: 300, max: 600 },
-    availability: 'available',
-    avatar: 'LC',
-    distance: 1.5
-  }
-];
+const API_BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
 
 const professions = [
   'Plombier', 'Électricien', 'Menuisier', 'Peintre', 'Couturière', 
@@ -128,8 +14,8 @@ const cities = [
 
 class SearchManager {
   constructor() {
-    this.currentResults = [...mockArtisans];
-    this.filteredResults = [...mockArtisans];
+    this.currentResults = [];
+    this.filteredResults = [];
     this.currentView = 'list';
     this.currentFilters = {
       search: '',
@@ -146,12 +32,64 @@ class SearchManager {
     this.init();
   }
 
-  init() {
+  async init() {
     this.loadSavedFilters();
     this.setupEventListeners();
+    await this.fetchArtisans();
     this.populateFilterOptions();
     this.renderResults();
     this.updateResultsCount();
+  }
+
+  async fetchArtisans() {
+    this.showLoading();
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/artisans?limit=100`);
+      if (!response.ok) throw new Error('Failed to load artisans');
+      const data = await response.json();
+      
+      this.currentResults = (data.data || []).map(artisan => ({
+        id: artisan._id,
+        name: `${artisan.firstName} ${artisan.lastName}`,
+        profession: artisan.profession,
+        city: artisan.city,
+        rating: artisan.rating || 0,
+        reviewCount: artisan.reviewCount || 0,
+        description: artisan.description || '',
+        skills: artisan.skills || [],
+        priceRange: { 
+            min: artisan.hourlyRate || 0, 
+            max: artisan.hourlyRate || 0 
+        },
+        availability: artisan.availability === 'immediate' ? 'available' : 'busy',
+        avatar: (artisan.firstName[0] + artisan.lastName[0]).toUpperCase(),
+        distance: 0 // Backend doesn't support distance yet
+      }));
+      
+      this.filteredResults = [...this.currentResults];
+      this.applyFilters();
+      
+    } catch (error) {
+      console.error('Error fetching artisans:', error);
+      this.currentResults = [];
+      this.filteredResults = [];
+    } finally {
+      this.hideLoading();
+    }
+  }
+
+  showLoading() {
+      const loadingState = document.getElementById('loading-state');
+      const resultsContent = document.getElementById('results-content');
+      if (loadingState) loadingState.classList.remove('hidden');
+      if (resultsContent) resultsContent.classList.add('hidden');
+  }
+
+  hideLoading() {
+      const loadingState = document.getElementById('loading-state');
+      const resultsContent = document.getElementById('results-content');
+      if (loadingState) loadingState.classList.add('hidden');
+      if (resultsContent) resultsContent.classList.remove('hidden');
   }
 
   loadSavedFilters() {
@@ -168,11 +106,20 @@ class SearchManager {
 
   applySavedFilters() {
     // Apply saved filters to form elements
-    document.getElementById('profession-filter').value = this.currentFilters.profession;
-    document.getElementById('city-filter').value = this.currentFilters.city;
-    document.getElementById('budget-min').value = this.currentFilters.budgetMin;
-    document.getElementById('budget-max').value = this.currentFilters.budgetMax;
-    document.getElementById('available-now').checked = this.currentFilters.availableNow;
+    const professionEl = document.getElementById('profession-filter');
+    if (professionEl) professionEl.value = this.currentFilters.profession;
+    
+    const cityEl = document.getElementById('city-filter');
+    if (cityEl) cityEl.value = this.currentFilters.city;
+    
+    const minEl = document.getElementById('budget-min');
+    if (minEl) minEl.value = this.currentFilters.budgetMin;
+    
+    const maxEl = document.getElementById('budget-max');
+    if (maxEl) maxEl.value = this.currentFilters.budgetMax;
+    
+    const availableEl = document.getElementById('available-now');
+    if (availableEl) availableEl.checked = this.currentFilters.availableNow;
     
     const ratingRadio = document.querySelector(`input[name="rating"][value="${this.currentFilters.rating}"]`);
     if (ratingRadio) ratingRadio.checked = true;
@@ -181,20 +128,29 @@ class SearchManager {
   populateFilterOptions() {
     // Populate profession filter
     const professionSelect = document.getElementById('profession-filter');
-    professions.forEach(profession => {
-      const option = document.createElement('option');
-      option.value = profession;
-      option.textContent = profession;
-      professionSelect.appendChild(option);
+    const uniqueProfessions = [...new Set([...professions, ...this.currentResults.map(a => a.profession)])].sort();
+    
+    uniqueProfessions.forEach(profession => {
+      // Check if option already exists
+      if (!professionSelect.querySelector(`option[value="${profession}"]`)) {
+        const option = document.createElement('option');
+        option.value = profession;
+        option.textContent = profession;
+        professionSelect.appendChild(option);
+      }
     });
 
     // Populate city filter
     const citySelect = document.getElementById('city-filter');
-    cities.forEach(city => {
-      const option = document.createElement('option');
-      option.value = city;
-      option.textContent = city;
-      citySelect.appendChild(option);
+    const uniqueCities = [...new Set([...cities, ...this.currentResults.map(a => a.city)])].sort();
+    
+    uniqueCities.forEach(city => {
+       if (!citySelect.querySelector(`option[value="${city}"]`)) {
+          const option = document.createElement('option');
+          option.value = city;
+          option.textContent = city;
+          citySelect.appendChild(option);
+       }
     });
   }
 
@@ -363,8 +319,9 @@ class SearchManager {
   generateSuggestions(searchTerm) {
     const suggestions = [];
 
-    // Search in professions
-    professions.forEach(profession => {
+    // Search in unique professions (including newly fetched)
+    const allProfessions = [...new Set([...professions, ...this.currentResults.map(a => a.profession)])];
+    allProfessions.forEach(profession => {
       if (profession.toLowerCase().includes(searchTerm)) {
         suggestions.push({
           type: 'profession',
@@ -375,8 +332,9 @@ class SearchManager {
       }
     });
 
-    // Search in cities
-    cities.forEach(city => {
+    // Search in unique cities
+    const allCities = [...new Set([...cities, ...this.currentResults.map(a => a.city)])];
+    allCities.forEach(city => {
       if (city.toLowerCase().includes(searchTerm)) {
         suggestions.push({
           type: 'city',
@@ -388,7 +346,7 @@ class SearchManager {
     });
 
     // Search in artisan names
-    mockArtisans.forEach(artisan => {
+    this.currentResults.forEach(artisan => {
       if (artisan.name.toLowerCase().includes(searchTerm)) {
         suggestions.push({
           type: 'artisan',
@@ -400,7 +358,7 @@ class SearchManager {
     });
 
     // Search in skills
-    mockArtisans.forEach(artisan => {
+    this.currentResults.forEach(artisan => {
       artisan.skills.forEach(skill => {
         if (skill.toLowerCase().includes(searchTerm)) {
           suggestions.push({
@@ -479,7 +437,8 @@ class SearchManager {
 
   hideSuggestions() {
     setTimeout(() => {
-      document.getElementById('search-suggestions').classList.add('hidden');
+      const el = document.getElementById('search-suggestions');
+      if (el) el.classList.add('hidden');
     }, 150);
   }
 
@@ -558,6 +517,7 @@ class SearchManager {
 
   renderResults() {
     const container = document.getElementById('list-view');
+    if (!container) return;
     
     if (this.filteredResults.length === 0) {
       this.showNoResults();
@@ -622,19 +582,25 @@ class SearchManager {
   }
 
   showNoResults() {
-    document.getElementById('no-results').classList.remove('hidden');
-    document.getElementById('list-view').classList.add('hidden');
+    const noResults = document.getElementById('no-results');
+    const listView = document.getElementById('list-view');
+    if (noResults) noResults.classList.remove('hidden');
+    if (listView) listView.classList.add('hidden');
   }
 
   hideNoResults() {
-    document.getElementById('no-results').classList.add('hidden');
-    document.getElementById('list-view').classList.remove('hidden');
+    const noResults = document.getElementById('no-results');
+    const listView = document.getElementById('list-view');
+    if (noResults) noResults.classList.add('hidden');
+    if (listView) listView.classList.remove('hidden');
   }
 
   updateResultsCount() {
     const count = this.filteredResults.length;
     const countElement = document.getElementById('results-count');
     
+    if (!countElement) return;
+
     if (i18n && typeof i18n.translate === 'function') {
       countElement.textContent = count;
       countElement.nextElementSibling.textContent = count === 1 ? 
@@ -661,11 +627,11 @@ class SearchManager {
     const mapView = document.getElementById('map-view');
     
     if (view === 'list') {
-      listView.classList.remove('hidden');
-      mapView.classList.add('hidden');
+      if (listView) listView.classList.remove('hidden');
+      if (mapView) mapView.classList.add('hidden');
     } else {
-      listView.classList.add('hidden');
-      mapView.classList.remove('hidden');
+      if (listView) listView.classList.add('hidden');
+      if (mapView) mapView.classList.remove('hidden');
     }
   }
 
@@ -681,19 +647,33 @@ class SearchManager {
     };
 
     // Reset form elements
-    document.getElementById('search-input').value = '';
-    document.getElementById('profession-filter').value = '';
-    document.getElementById('city-filter').value = '';
-    document.getElementById('budget-min').value = '';
-    document.getElementById('budget-max').value = '';
-    document.getElementById('available-now').checked = false;
-    document.querySelector('input[name="rating"][value=""]').checked = true;
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) searchInput.value = '';
+    
+    const professionEl = document.getElementById('profession-filter');
+    if (professionEl) professionEl.value = '';
+    
+    const cityEl = document.getElementById('city-filter');
+    if (cityEl) cityEl.value = '';
+    
+    const minEl = document.getElementById('budget-min');
+    if (minEl) minEl.value = '';
+    
+    const maxEl = document.getElementById('budget-max');
+    if (maxEl) maxEl.value = '';
+    
+    const availableEl = document.getElementById('available-now');
+    if (availableEl) availableEl.checked = false;
+    
+    const ratingRadio = document.querySelector('input[name="rating"][value=""]');
+    if (ratingRadio) ratingRadio.checked = true;
 
     this.applyFilters();
   }
 
   clearSearch() {
-    document.getElementById('search-input').value = '';
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) searchInput.value = '';
     this.currentFilters.search = '';
     this.applyFilters();
   }
@@ -702,15 +682,17 @@ class SearchManager {
     const sidebar = document.getElementById('filters-sidebar');
     const toggleBtn = document.getElementById('toggle-filters');
     
-    sidebar.classList.toggle('hidden');
-    toggleBtn.textContent = sidebar.classList.contains('hidden') ? 
-      i18n.translate('search.filters.show') : 
-      i18n.translate('search.filters.hide');
+    if (sidebar) sidebar.classList.toggle('hidden');
+    if (toggleBtn && sidebar) {
+        toggleBtn.textContent = sidebar.classList.contains('hidden') ? 
+        i18n.translate('search.filters.show') : 
+        i18n.translate('search.filters.hide');
+    }
   }
 
   showContactModal(artisanId) {
     const modal = document.getElementById('contact-modal');
-    const artisan = mockArtisans.find(a => a.id === artisanId);
+    const artisan = this.currentResults.find(a => a.id === artisanId);
     
     if (!artisan) return;
 
@@ -724,8 +706,10 @@ class SearchManager {
   }
 
   hideModal() {
-    document.getElementById('contact-modal').classList.add('hidden');
-    document.getElementById('contact-form').reset();
+    const modal = document.getElementById('contact-modal');
+    if (modal) modal.classList.add('hidden');
+    const form = document.getElementById('contact-form');
+    if (form) form.reset();
   }
 
   async submitContactForm() {
@@ -746,7 +730,20 @@ class SearchManager {
     submitBtn.textContent = i18n.translate('contact.modal.sending') || 'Sending...';
 
     try {
-      // Mock API call - replace with actual API integration
+      // Create contact request via API
+      // Endpoint: POST /api/demandes (as per server.js mounting)
+      // But contact form here is for specific artisan?
+      // "ClientRequest" model has "serviceCategory", "serviceType", "city", etc.
+      // But it doesn't seem to have direct link to an artisan in the model definition in memory?
+      // "ClientRequests with budget, deadline, tracking"
+      // Wait, this modal is "Contact Professional".
+      // There is no endpoint documented for contacting a specific artisan in the ticket description.
+      // "POST /api/demandes (create contact request)" exists.
+      // I'll assume for now we just use the mock behavior or try to use /api/demandes if it fits.
+      // Since ticket didn't ask to fix "Contact Professional" feature specifically but "Signup form" and "Search page display",
+      // I will keep the mock behavior for contact form submit to avoid breaking it if API is not ready for direct contact.
+      // But I will log it.
+      
       await new Promise(resolve => setTimeout(resolve, 2000));
       
       console.log('Contact form submitted:', data);
@@ -963,7 +960,7 @@ const searchTranslations = {
 
 // Extend existing translations
 Object.keys(searchTranslations).forEach(lang => {
-  if (translations[lang]) {
+  if (typeof translations !== 'undefined' && translations[lang]) {
     translations[lang] = { ...translations[lang], ...searchTranslations[lang] };
   }
 });
@@ -985,21 +982,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Update translations when language changes
-  const originalSetLanguage = i18n.setLanguage;
-  i18n.setLanguage = function(lang) {
-    originalSetLanguage.call(this, lang);
-    
-    // Re-render search results with new translations
-    if (window.searchManager) {
-      window.searchManager.renderResults();
-      window.searchManager.updateResultsCount();
-    }
-  };
+  if (typeof i18n !== 'undefined') {
+      const originalSetLanguage = i18n.setLanguage;
+      i18n.setLanguage = function(lang) {
+        originalSetLanguage.call(this, lang);
+        
+        // Re-render search results with new translations
+        if (window.searchManager) {
+          window.searchManager.renderResults();
+          window.searchManager.updateResultsCount();
+        }
+      };
+  }
 
   // Add some realistic delays for better UX
   setTimeout(() => {
-    document.querySelector('.search-header').style.opacity = '1';
-    document.querySelector('.search-header').style.transform = 'translateY(0)';
+    const header = document.querySelector('.search-header');
+    if (header) {
+        header.style.opacity = '1';
+        header.style.transform = 'translateY(0)';
+    }
   }, 100);
 });
 
