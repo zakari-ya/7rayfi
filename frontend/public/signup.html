@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="description" content="7rayfi - Artisan signup" />
+    <meta name="theme-color" content="#2563eb" />
+
+    <title>7rayfi - Artisan Signup</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="/styles/landing.css" />
+    <link rel="stylesheet" href="/styles/signup.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="header">
+        <div class="container">
+          <div class="header-content">
+            <a href="/" class="logo" data-i18n="logo">7rayfi</a>
+            <div class="header-actions">
+              <select id="language-selector" class="language-selector" aria-label="Select language">
+                <option value="en">English</option>
+                <option value="fr">Français</option>
+                <option value="ar">العربية</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="signup-main">
+        <div class="container">
+          <section class="signup-header" aria-label="Signup header">
+            <h1 class="page-title" data-i18n="signup.title">Artisan Registration</h1>
+            <p class="page-subtitle" data-i18n="signup.subtitle">Create your profile in 4 steps.</p>
+          </section>
+
+          <section class="wizard" aria-label="Signup wizard">
+            <ol class="wizard-progress" id="wizard-progress" aria-label="Progress">
+              <li class="wizard-progress-step" data-step="1">
+                <span class="step-index" aria-hidden="true">1</span>
+                <span class="step-label" data-i18n="signup.steps.identity">Identity</span>
+              </li>
+              <li class="wizard-progress-step" data-step="2">
+                <span class="step-index" aria-hidden="true">2</span>
+                <span class="step-label" data-i18n="signup.steps.profession">Profession</span>
+              </li>
+              <li class="wizard-progress-step" data-step="3">
+                <span class="step-index" aria-hidden="true">3</span>
+                <span class="step-label" data-i18n="signup.steps.presentation">Presentation</span>
+              </li>
+              <li class="wizard-progress-step" data-step="4">
+                <span class="step-index" aria-hidden="true">4</span>
+                <span class="step-label" data-i18n="signup.steps.account">Account</span>
+              </li>
+            </ol>
+
+            <form id="signup-form" class="wizard-form" novalidate>
+              <!-- Step 1: Identity -->
+              <div class="wizard-panel" data-step="1" aria-labelledby="step-1-title">
+                <h2 class="panel-title" id="step-1-title" data-i18n="signup.panels.identity.title">
+                  Identity
+                </h2>
+
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label for="firstName" data-i18n="signup.fields.firstName.label">First name</label>
+                    <input
+                      type="text"
+                      id="firstName"
+                      name="firstName"
+                      autocomplete="given-name"
+                      data-i18n-placeholder="signup.fields.firstName.placeholder"
+                      placeholder="Ahmed"
+                      required
+                    />
+                    <div class="field-error" id="error-firstName" aria-live="polite"></div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="lastName" data-i18n="signup.fields.lastName.label">Last name</label>
+                    <input
+                      type="text"
+                      id="lastName"
+                      name="lastName"
+                      autocomplete="family-name"
+                      data-i18n-placeholder="signup.fields.lastName.placeholder"
+                      placeholder="Benali"
+                      required
+                    />
+                    <div class="field-error" id="error-lastName" aria-live="polite"></div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="email" data-i18n="signup.fields.email.label">Email</label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      autocomplete="email"
+                      inputmode="email"
+                      data-i18n-placeholder="signup.fields.email.placeholder"
+                      placeholder="ahmed@example.com"
+                      required
+                    />
+                    <div class="field-error" id="error-email" aria-live="polite"></div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="phone" data-i18n="signup.fields.phone.label">Phone</label>
+                    <input
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      autocomplete="tel"
+                      inputmode="tel"
+                      data-i18n-placeholder="signup.fields.phone.placeholder"
+                      placeholder="+2126XXXXXXXX"
+                      required
+                    />
+                    <div class="field-error" id="error-phone" aria-live="polite"></div>
+                  </div>
+                </div>
+
+                <div class="sms-card" aria-label="SMS verification">
+                  <div class="sms-header">
+                    <div>
+                      <h3 class="sms-title" data-i18n="signup.sms.title">SMS Verification</h3>
+                      <p class="sms-subtitle" data-i18n="signup.sms.subtitle">
+                        We will send a 6-digit code to verify your number.
+                      </p>
+                    </div>
+                    <button type="button" class="btn btn-secondary" id="send-sms-btn" data-i18n="signup.sms.send">
+                      Send code
+                    </button>
+                  </div>
+
+                  <div class="sms-body">
+                    <p class="sms-hint" id="sms-hint"></p>
+
+                    <div class="sms-verify-row">
+                      <div class="form-group">
+                        <label for="smsCode" data-i18n="signup.sms.code.label">Verification code</label>
+                        <input
+                          type="text"
+                          id="smsCode"
+                          name="smsCode"
+                          inputmode="numeric"
+                          autocomplete="one-time-code"
+                          maxlength="6"
+                          data-i18n-placeholder="signup.sms.code.placeholder"
+                          placeholder="123456"
+                        />
+                        <div class="field-error" id="error-smsCode" aria-live="polite"></div>
+                      </div>
+
+                      <button type="button" class="btn btn-secondary" id="verify-sms-btn" data-i18n="signup.sms.verify">
+                        Verify
+                      </button>
+                    </div>
+
+                    <p class="sms-status" id="sms-status" aria-live="polite"></p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Step 2: Profession -->
+              <div class="wizard-panel hidden" data-step="2" aria-labelledby="step-2-title">
+                <h2 class="panel-title" id="step-2-title" data-i18n="signup.panels.profession.title">
+                  Profession
+                </h2>
+
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label for="profession" data-i18n="signup.fields.profession.label">Profession</label>
+                    <input
+                      type="text"
+                      id="profession"
+                      name="profession"
+                      data-i18n-placeholder="signup.fields.profession.placeholder"
+                      placeholder="Plumber"
+                      required
+                    />
+                    <div class="field-error" id="error-profession" aria-live="polite"></div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="category" data-i18n="signup.fields.category.label">Category</label>
+                    <select id="category" name="category" required>
+                      <option value="" data-i18n="signup.fields.category.placeholder">Select a category</option>
+                    </select>
+                    <div class="field-error" id="error-category" aria-live="polite"></div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="skills" data-i18n="signup.fields.skills.label">Skills</label>
+                    <textarea
+                      id="skills"
+                      name="skills"
+                      rows="3"
+                      data-i18n-placeholder="signup.fields.skills.placeholder"
+                      placeholder="Repair, Installation, Emergency"
+                      required
+                    ></textarea>
+                    <div class="field-help" data-i18n="signup.fields.skills.help">
+                      Separate skills with commas.
+                    </div>
+                    <div class="field-error" id="error-skills" aria-live="polite"></div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="city" data-i18n="signup.fields.city.label">Primary city</label>
+                    <input
+                      type="text"
+                      id="city"
+                      name="city"
+                      data-i18n-placeholder="signup.fields.city.placeholder"
+                      placeholder="Casablanca"
+                      required
+                    />
+                    <div class="field-error" id="error-city" aria-live="polite"></div>
+                  </div>
+
+                  <div class="form-group form-group-full">
+                    <label for="serviceAreas" data-i18n="signup.fields.serviceAreas.label">Service areas</label>
+                    <textarea
+                      id="serviceAreas"
+                      name="serviceAreas"
+                      rows="2"
+                      data-i18n-placeholder="signup.fields.serviceAreas.placeholder"
+                      placeholder="Casablanca, Mohammedia"
+                      required
+                    ></textarea>
+                    <div class="field-help" data-i18n="signup.fields.serviceAreas.help">
+                      List the cities where you can work.
+                    </div>
+                    <div class="field-error" id="error-serviceAreas" aria-live="polite"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Step 3: Presentation -->
+              <div class="wizard-panel hidden" data-step="3" aria-labelledby="step-3-title">
+                <h2 class="panel-title" id="step-3-title" data-i18n="signup.panels.presentation.title">
+                  Presentation
+                </h2>
+
+                <div class="form-grid">
+                  <div class="form-group form-group-full">
+                    <label for="bio" data-i18n="signup.fields.bio.label">Bio</label>
+                    <textarea
+                      id="bio"
+                      name="bio"
+                      rows="5"
+                      data-i18n-placeholder="signup.fields.bio.placeholder"
+                      placeholder="Tell clients about your experience..."
+                      required
+                    ></textarea>
+                    <div class="field-error" id="error-bio" aria-live="polite"></div>
+                  </div>
+
+                  <div class="form-group form-group-full">
+                    <label for="portfolioLinks" data-i18n="signup.fields.portfolioLinks.label">Portfolio links</label>
+                    <textarea
+                      id="portfolioLinks"
+                      name="portfolioLinks"
+                      rows="3"
+                      data-i18n-placeholder="signup.fields.portfolioLinks.placeholder"
+                      placeholder="https://example.com/project-1\nhttps://example.com/project-2"
+                    ></textarea>
+                    <div class="field-help" data-i18n="signup.fields.portfolioLinks.help">
+                      One link per line (optional).
+                    </div>
+                    <div class="field-error" id="error-portfolioLinks" aria-live="polite"></div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="hourlyRate" data-i18n="signup.fields.hourlyRate.label">Hourly rate (MAD)</label>
+                    <input
+                      type="number"
+                      id="hourlyRate"
+                      name="hourlyRate"
+                      min="0"
+                      step="1"
+                      inputmode="decimal"
+                      data-i18n-placeholder="signup.fields.hourlyRate.placeholder"
+                      placeholder="250"
+                      required
+                    />
+                    <div class="field-error" id="error-hourlyRate" aria-live="polite"></div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="pricingNote" data-i18n="signup.fields.pricingNote.label">Pricing note</label>
+                    <input
+                      type="text"
+                      id="pricingNote"
+                      name="pricingNote"
+                      data-i18n-placeholder="signup.fields.pricingNote.placeholder"
+                      placeholder="Minimum 2 hours"
+                    />
+                    <div class="field-help" data-i18n="signup.fields.pricingNote.help">
+                      Optional note shown to clients.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Step 4: Account -->
+              <div class="wizard-panel hidden" data-step="4" aria-labelledby="step-4-title">
+                <h2 class="panel-title" id="step-4-title" data-i18n="signup.panels.account.title">
+                  Account
+                </h2>
+
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label for="username" data-i18n="signup.fields.username.label">Username</label>
+                    <input
+                      type="text"
+                      id="username"
+                      name="username"
+                      autocomplete="username"
+                      data-i18n-placeholder="signup.fields.username.placeholder"
+                      placeholder="ahmed.plumber"
+                      required
+                    />
+                    <div class="field-error" id="error-username" aria-live="polite"></div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="password" data-i18n="signup.fields.password.label">Password</label>
+                    <input
+                      type="password"
+                      id="password"
+                      name="password"
+                      autocomplete="new-password"
+                      data-i18n-placeholder="signup.fields.password.placeholder"
+                      placeholder="••••••••"
+                      required
+                    />
+                    <div class="field-error" id="error-password" aria-live="polite"></div>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="confirmPassword" data-i18n="signup.fields.confirmPassword.label">Confirm password</label>
+                    <input
+                      type="password"
+                      id="confirmPassword"
+                      name="confirmPassword"
+                      autocomplete="new-password"
+                      data-i18n-placeholder="signup.fields.confirmPassword.placeholder"
+                      placeholder="••••••••"
+                      required
+                    />
+                    <div class="field-error" id="error-confirmPassword" aria-live="polite"></div>
+                  </div>
+                </div>
+
+                <div class="submit-card">
+                  <p class="submit-note" data-i18n="signup.submitNote">
+                    By submitting, you will create your artisan profile.
+                  </p>
+                  <div id="form-status" class="form-status" role="status" aria-live="polite"></div>
+                </div>
+              </div>
+
+              <div class="wizard-navigation">
+                <button type="button" class="btn btn-secondary" id="back-btn" data-i18n="signup.actions.back">
+                  Back
+                </button>
+                <button type="button" class="btn btn-primary" id="next-btn" data-i18n="signup.actions.next">
+                  Next
+                </button>
+                <button type="submit" class="btn btn-primary hidden" id="submit-btn" data-i18n="signup.actions.submit">
+                  Create account
+                </button>
+              </div>
+            </form>
+          </section>
+        </div>
+      </main>
+
+      <footer class="footer">
+        <div class="container">
+          <div class="footer-bottom">
+            <p data-i18n="footer.copyright">© 2024 7rayfi. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script src="/scripts/landing.js"></script>
+    <script src="/scripts/signup.js"></script>
+  </body>
+</html>

@@ -109,6 +109,100 @@ const translations = {
         submit: 'Send Message',
       },
     },
+    signup: {
+      title: 'Artisan Registration',
+      subtitle: 'Create your profile in 4 steps.',
+      steps: {
+        identity: 'Identity',
+        profession: 'Profession',
+        presentation: 'Presentation',
+        account: 'Account',
+      },
+      panels: {
+        identity: { title: 'Identity' },
+        profession: { title: 'Profession' },
+        presentation: { title: 'Presentation' },
+        account: { title: 'Account' },
+      },
+      fields: {
+        firstName: { label: 'First name', placeholder: 'Ahmed' },
+        lastName: { label: 'Last name', placeholder: 'Benali' },
+        email: { label: 'Email', placeholder: 'ahmed@example.com' },
+        phone: { label: 'Phone', placeholder: '+2126XXXXXXXX' },
+        profession: { label: 'Profession', placeholder: 'Plumber' },
+        category: { label: 'Category', placeholder: 'Select a category' },
+        skills: {
+          label: 'Skills',
+          placeholder: 'Repair, Installation, Emergency',
+          help: 'Separate skills with commas.',
+        },
+        city: { label: 'Primary city', placeholder: 'Casablanca' },
+        serviceAreas: {
+          label: 'Service areas',
+          placeholder: 'Casablanca, Mohammedia',
+          help: 'List the cities where you can work.',
+        },
+        bio: { label: 'Bio', placeholder: 'Tell clients about your experience...' },
+        portfolioLinks: {
+          label: 'Portfolio links',
+          placeholder: 'https://example.com/project-1\nhttps://example.com/project-2',
+          help: 'One link per line (optional).',
+        },
+        hourlyRate: { label: 'Hourly rate (MAD)', placeholder: '250' },
+        pricingNote: {
+          label: 'Pricing note',
+          placeholder: 'Minimum 2 hours',
+          help: 'Optional note shown to clients.',
+        },
+        username: { label: 'Username', placeholder: 'ahmed.plumber' },
+        password: { label: 'Password', placeholder: '••••••••' },
+        confirmPassword: { label: 'Confirm password', placeholder: '••••••••' },
+      },
+      sms: {
+        title: 'SMS Verification',
+        subtitle: 'We will send a 6-digit code to verify your number.',
+        send: 'Send code',
+        sent: 'Code sent.',
+        verified: 'Phone verified.',
+        mockHint: 'Mock SMS to {phone}: your code is {code}',
+        noCodeYet: 'No code sent yet.',
+        code: { label: 'Verification code', placeholder: '123456' },
+        errors: {
+          enterPhone: 'Enter your phone number first.',
+          invalidPhone: 'Enter a valid Moroccan phone number.',
+          sendFirst: 'Send a code first.',
+          invalidCodeFormat: 'Enter a 6-digit code.',
+          wrongCode: 'Wrong code. Try again.',
+        },
+      },
+      errors: {
+        required: 'This field is required.',
+        min2: 'Must be at least 2 characters.',
+        min3: 'Must be at least 3 characters.',
+        minOne: 'Add at least one item.',
+        invalidEmail: 'Enter a valid email address.',
+        invalidPhone: 'Enter a valid Moroccan phone number.',
+        positiveNumber: 'Enter a positive number.',
+        invalidUrl: 'Enter a valid URL.',
+        passwordMin6: 'Password must be at least 6 characters.',
+        passwordMismatch: "Passwords don't match.",
+        smsNotVerified: 'Please verify your phone number.',
+        fixBeforeSubmit: 'Please fix the errors before submitting.',
+      },
+      status: {
+        submitting: 'Submitting...',
+        submitSuccess: 'Registration submitted successfully.',
+        submitError: 'Could not submit registration.',
+        networkError: 'Network error. Please try again.',
+        categoriesFallback: 'Could not load categories. Showing fallback list.',
+      },
+      actions: {
+        back: 'Back',
+        next: 'Next',
+        submit: 'Create account',
+      },
+      submitNote: 'By submitting, you will create your artisan profile.',
+    },
     footer: {
       about: {
         title: 'About 7rayfi',
@@ -240,6 +334,100 @@ const translations = {
         submit: 'Envoyer le Message',
       },
     },
+    signup: {
+      title: 'Inscription Artisan',
+      subtitle: 'Créez votre profil en 4 étapes.',
+      steps: {
+        identity: 'Identité',
+        profession: 'Profession',
+        presentation: 'Présentation',
+        account: 'Compte',
+      },
+      panels: {
+        identity: { title: 'Identité' },
+        profession: { title: 'Profession' },
+        presentation: { title: 'Présentation' },
+        account: { title: 'Compte' },
+      },
+      fields: {
+        firstName: { label: 'Prénom', placeholder: 'Ahmed' },
+        lastName: { label: 'Nom', placeholder: 'Benali' },
+        email: { label: 'Email', placeholder: 'ahmed@example.com' },
+        phone: { label: 'Téléphone', placeholder: '+2126XXXXXXXX' },
+        profession: { label: 'Profession', placeholder: 'Plombier' },
+        category: { label: 'Catégorie', placeholder: 'Sélectionner une catégorie' },
+        skills: {
+          label: 'Compétences',
+          placeholder: 'Réparation, Installation, Urgence',
+          help: 'Séparez les compétences par des virgules.',
+        },
+        city: { label: 'Ville principale', placeholder: 'Casablanca' },
+        serviceAreas: {
+          label: 'Zones de service',
+          placeholder: 'Casablanca, Mohammedia',
+          help: 'Listez les villes où vous pouvez intervenir.',
+        },
+        bio: { label: 'Présentation', placeholder: 'Parlez de votre expérience...' },
+        portfolioLinks: {
+          label: 'Liens portfolio',
+          placeholder: 'https://example.com/projet-1\nhttps://example.com/projet-2',
+          help: 'Un lien par ligne (optionnel).',
+        },
+        hourlyRate: { label: 'Tarif horaire (MAD)', placeholder: '250' },
+        pricingNote: {
+          label: 'Note de prix',
+          placeholder: 'Minimum 2 heures',
+          help: 'Note optionnelle affichée aux clients.',
+        },
+        username: { label: "Nom d'utilisateur", placeholder: 'ahmed.plombier' },
+        password: { label: 'Mot de passe', placeholder: '••••••••' },
+        confirmPassword: { label: 'Confirmer le mot de passe', placeholder: '••••••••' },
+      },
+      sms: {
+        title: 'Vérification SMS',
+        subtitle: 'Nous enverrons un code à 6 chiffres pour vérifier votre numéro.',
+        send: 'Envoyer le code',
+        sent: 'Code envoyé.',
+        verified: 'Téléphone vérifié.',
+        mockHint: 'SMS simulé vers {phone} : votre code est {code}',
+        noCodeYet: "Aucun code envoyé pour le moment.",
+        code: { label: 'Code de vérification', placeholder: '123456' },
+        errors: {
+          enterPhone: 'Saisissez d\'abord votre numéro de téléphone.',
+          invalidPhone: 'Saisissez un numéro marocain valide.',
+          sendFirst: 'Envoyez d\'abord un code.',
+          invalidCodeFormat: 'Saisissez un code à 6 chiffres.',
+          wrongCode: 'Code incorrect. Réessayez.',
+        },
+      },
+      errors: {
+        required: 'Champ requis.',
+        min2: 'Au moins 2 caractères.',
+        min3: 'Au moins 3 caractères.',
+        minOne: 'Ajoutez au moins un élément.',
+        invalidEmail: 'Veuillez saisir une adresse email valide.',
+        invalidPhone: 'Veuillez saisir un numéro de téléphone marocain valide.',
+        positiveNumber: 'Veuillez saisir un nombre positif.',
+        invalidUrl: 'Veuillez saisir une URL valide.',
+        passwordMin6: 'Le mot de passe doit contenir au moins 6 caractères.',
+        passwordMismatch: 'Les mots de passe ne correspondent pas.',
+        smsNotVerified: 'Veuillez vérifier votre numéro de téléphone.',
+        fixBeforeSubmit: 'Veuillez corriger les erreurs avant de soumettre.',
+      },
+      status: {
+        submitting: 'Envoi en cours...',
+        submitSuccess: 'Inscription envoyée avec succès.',
+        submitError: "Impossible d'envoyer l'inscription.",
+        networkError: 'Erreur réseau. Veuillez réessayer.',
+        categoriesFallback: 'Impossible de charger les catégories. Liste de secours affichée.',
+      },
+      actions: {
+        back: 'Retour',
+        next: 'Suivant',
+        submit: 'Créer le compte',
+      },
+      submitNote: 'En soumettant, vous créerez votre profil artisan.',
+    },
     footer: {
       about: {
         title: 'À Propos de 7rayfi',
@@ -370,6 +558,100 @@ const translations = {
         submit: 'إرسال الرسالة',
       },
     },
+    signup: {
+      title: 'تسجيل الحرفي',
+      subtitle: 'أنشئ ملفك في 4 خطوات.',
+      steps: {
+        identity: 'الهوية',
+        profession: 'المهنة',
+        presentation: 'التعريف',
+        account: 'الحساب',
+      },
+      panels: {
+        identity: { title: 'الهوية' },
+        profession: { title: 'المهنة' },
+        presentation: { title: 'التعريف' },
+        account: { title: 'الحساب' },
+      },
+      fields: {
+        firstName: { label: 'الاسم الشخصي', placeholder: 'Ahmed' },
+        lastName: { label: 'الاسم العائلي', placeholder: 'Benali' },
+        email: { label: 'البريد الإلكتروني', placeholder: 'ahmed@example.com' },
+        phone: { label: 'الهاتف', placeholder: '+2126XXXXXXXX' },
+        profession: { label: 'المهنة', placeholder: 'Plumber' },
+        category: { label: 'الفئة', placeholder: 'اختر فئة' },
+        skills: {
+          label: 'المهارات',
+          placeholder: 'Repair, Installation, Emergency',
+          help: 'افصل المهارات بفواصل.',
+        },
+        city: { label: 'المدينة الرئيسية', placeholder: 'Casablanca' },
+        serviceAreas: {
+          label: 'مناطق الخدمة',
+          placeholder: 'Casablanca, Mohammedia',
+          help: 'اذكر المدن التي يمكنك العمل فيها.',
+        },
+        bio: { label: 'نبذة', placeholder: 'عرّف العملاء بخبرتك...' },
+        portfolioLinks: {
+          label: 'روابط الأعمال',
+          placeholder: 'https://example.com/project-1\nhttps://example.com/project-2',
+          help: 'رابط واحد في كل سطر (اختياري).',
+        },
+        hourlyRate: { label: 'الأجر بالساعة (درهم)', placeholder: '250' },
+        pricingNote: {
+          label: 'ملاحظة التسعير',
+          placeholder: 'الحد الأدنى ساعتان',
+          help: 'ملاحظة اختيارية تظهر للعملاء.',
+        },
+        username: { label: 'اسم المستخدم', placeholder: 'ahmed.plumber' },
+        password: { label: 'كلمة المرور', placeholder: '••••••••' },
+        confirmPassword: { label: 'تأكيد كلمة المرور', placeholder: '••••••••' },
+      },
+      sms: {
+        title: 'التحقق عبر SMS',
+        subtitle: 'سنرسل رمزًا من 6 أرقام للتحقق من رقمك.',
+        send: 'إرسال الرمز',
+        sent: 'تم إرسال الرمز.',
+        verified: 'تم التحقق من الهاتف.',
+        mockHint: 'رسالة SMS تجريبية إلى {phone}: رمزك هو {code}',
+        noCodeYet: 'لم يتم إرسال أي رمز بعد.',
+        code: { label: 'رمز التحقق', placeholder: '123456' },
+        errors: {
+          enterPhone: 'أدخل رقم هاتفك أولاً.',
+          invalidPhone: 'أدخل رقم هاتف مغربي صالح.',
+          sendFirst: 'أرسل رمزًا أولاً.',
+          invalidCodeFormat: 'أدخل رمزًا من 6 أرقام.',
+          wrongCode: 'رمز غير صحيح. حاول مرة أخرى.',
+        },
+      },
+      errors: {
+        required: 'هذا الحقل مطلوب.',
+        min2: 'يجب أن يكون على الأقل حرفين.',
+        min3: 'يجب أن يكون على الأقل 3 أحرف.',
+        minOne: 'أضف عنصرًا واحدًا على الأقل.',
+        invalidEmail: 'أدخل بريدًا إلكترونيًا صالحًا.',
+        invalidPhone: 'أدخل رقم هاتف مغربي صالح.',
+        positiveNumber: 'أدخل رقمًا موجبًا.',
+        invalidUrl: 'أدخل رابطًا صالحًا.',
+        passwordMin6: 'يجب أن تكون كلمة المرور 6 أحرف على الأقل.',
+        passwordMismatch: 'كلمتا المرور غير متطابقتين.',
+        smsNotVerified: 'يرجى التحقق من رقم هاتفك.',
+        fixBeforeSubmit: 'يرجى إصلاح الأخطاء قبل الإرسال.',
+      },
+      status: {
+        submitting: 'جارٍ الإرسال...',
+        submitSuccess: 'تم إرسال التسجيل بنجاح.',
+        submitError: 'تعذر إرسال التسجيل.',
+        networkError: 'خطأ في الشبكة. حاول مرة أخرى.',
+        categoriesFallback: 'تعذر تحميل الفئات. تم عرض قائمة بديلة.',
+      },
+      actions: {
+        back: 'رجوع',
+        next: 'التالي',
+        submit: 'إنشاء الحساب',
+      },
+      submitNote: 'بالإرسال، ستنشئ ملفك كحرفي.',
+    },
     footer: {
       about: {
         title: 'عن 7رايفي',
@@ -426,17 +708,36 @@ class I18n {
   }
 
   updatePage() {
-    const elements = document.querySelectorAll('[data-i18n]');
-    elements.forEach(el => {
+    const textElements = document.querySelectorAll('[data-i18n]');
+    textElements.forEach(el => {
       const key = el.getAttribute('data-i18n');
       const translation = this.translate(key);
-      if (typeof translation === 'string') {
-        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-          el.placeholder = translation;
-        } else {
-          el.textContent = translation;
-        }
+      if (typeof translation !== 'string') return;
+      if (translation === key) return;
+
+      if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+        el.placeholder = translation;
+      } else {
+        el.textContent = translation;
       }
+    });
+
+    const placeholderElements = document.querySelectorAll('[data-i18n-placeholder]');
+    placeholderElements.forEach(el => {
+      const key = el.getAttribute('data-i18n-placeholder');
+      const translation = this.translate(key);
+      if (typeof translation !== 'string') return;
+      if (translation === key) return;
+      el.setAttribute('placeholder', translation);
+    });
+
+    const ariaLabelElements = document.querySelectorAll('[data-i18n-aria-label]');
+    ariaLabelElements.forEach(el => {
+      const key = el.getAttribute('data-i18n-aria-label');
+      const translation = this.translate(key);
+      if (typeof translation !== 'string') return;
+      if (translation === key) return;
+      el.setAttribute('aria-label', translation);
     });
   }
 
@@ -698,6 +999,7 @@ class ContactForm {
 
 document.addEventListener('DOMContentLoaded', () => {
   const i18n = new I18n();
+  window.i18n = i18n;
 
   const languageSelector = document.getElementById('language-selector');
   if (languageSelector) {
