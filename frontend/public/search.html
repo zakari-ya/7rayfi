@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="description"
+      content="7rayfi - Search for professional services"
+    />
+    <meta name="theme-color" content="#2563eb" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+
+    <title>7rayfi - Search Services</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="/styles/landing.css" />
+    <link rel="stylesheet" href="/styles/search.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="header">
+        <div class="container">
+          <div class="header-content">
+            <a href="/" class="logo" data-i18n="logo">7rayfi</a>
+            <div class="header-actions">
+              <select id="language-selector" class="language-selector" aria-label="Select language">
+                <option value="en">English</option>
+                <option value="fr">Français</option>
+                <option value="ar">العربية</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="search-main">
+        <div class="container">
+          <!-- Search Header -->
+          <section class="search-header">
+            <h1 class="page-title" data-i18n="search.title">Search Services</h1>
+            <p class="page-subtitle" data-i18n="search.subtitle">
+              Find the perfect professional for your needs
+            </p>
+
+            <!-- Smart Search Bar -->
+            <div class="search-bar-container">
+              <div class="search-bar">
+                <div class="search-input-wrapper">
+                  <input
+                    type="text"
+                    id="search-input"
+                    class="search-input"
+                    placeholder="Search for services, professionals..."
+                    data-i18n-placeholder="search.placeholder"
+                    autocomplete="off"
+                  />
+                  <button class="search-button" aria-label="Search">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                  </button>
+                </div>
+                <!-- Autocomplete Suggestions -->
+                <div id="search-suggestions" class="search-suggestions hidden"></div>
+              </div>
+            </div>
+
+            <!-- View Toggle -->
+            <div class="view-toggle-container">
+              <div class="view-toggle" role="group" aria-label="View toggle">
+                <button class="view-btn active" data-view="list" aria-pressed="true">
+                  <svg class="view-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <line x1="8" y1="6" x2="21" y2="6"></line>
+                    <line x1="8" y1="12" x2="21" y2="12"></line>
+                    <line x1="8" y1="18" x2="21" y2="18"></line>
+                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                  </svg>
+                  <span data-i18n="search.viewList">List</span>
+                </button>
+                <button class="view-btn" data-view="map" aria-pressed="false">
+                  <svg class="view-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 4m0 13V4m0 0L9 7"></path>
+                  </svg>
+                  <span data-i18n="search.viewMap">Map</span>
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <div class="search-layout">
+            <!-- Advanced Filters -->
+            <aside class="filters-sidebar" id="filters-sidebar">
+              <div class="filters-header">
+                <h2 data-i18n="search.filters.title">Filters</h2>
+                <button id="toggle-filters" class="filters-toggle">
+                  <span data-i18n="search.filters.toggle">Hide Filters</span>
+                </button>
+              </div>
+
+              <div class="filters-content">
+                <!-- Profession Filter -->
+                <div class="filter-group">
+                  <h3 class="filter-title" data-i18n="search.filters.profession">Profession</h3>
+                  <select id="profession-filter" class="filter-select">
+                    <option value="" data-i18n="search.filters.allProfessions">All Professions</option>
+                    <!-- Options populated by JS -->
+                  </select>
+                </div>
+
+                <!-- City Filter -->
+                <div class="filter-group">
+                  <h3 class="filter-title" data-i18n="search.filters.city">City</h3>
+                  <select id="city-filter" class="filter-select">
+                    <option value="" data-i18n="search.filters.allCities">All Cities</option>
+                    <!-- Options populated by JS -->
+                  </select>
+                </div>
+
+                <!-- Rating Filter -->
+                <div class="filter-group">
+                  <h3 class="filter-title" data-i18n="search.filters.rating">Minimum Rating</h3>
+                  <div class="rating-filter">
+                    <div class="rating-options">
+                      <label class="rating-option">
+                        <input type="radio" name="rating" value="" checked />
+                        <span data-i18n="search.filters.anyRating">Any Rating</span>
+                      </label>
+                      <label class="rating-option">
+                        <input type="radio" name="rating" value="4" />
+                        <div class="star-rating">
+                          <span class="stars">★★★★☆</span>
+                          <span class="rating-text">4+</span>
+                        </div>
+                      </label>
+                      <label class="rating-option">
+                        <input type="radio" name="rating" value="3" />
+                        <div class="star-rating">
+                          <span class="stars">★★★☆☆</span>
+                          <span class="rating-text">3+</span>
+                        </div>
+                      </label>
+                      <label class="rating-option">
+                        <input type="radio" name="rating" value="2" />
+                        <div class="star-rating">
+                          <span class="stars">★★☆☆☆</span>
+                          <span class="rating-text">2+</span>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Budget Filter -->
+                <div class="filter-group">
+                  <h3 class="filter-title" data-i18n="search.filters.budget">Budget Range</h3>
+                  <div class="budget-filter">
+                    <div class="budget-inputs">
+                      <input
+                        type="number"
+                        id="budget-min"
+                        class="budget-input"
+                        placeholder="Min"
+                        min="0"
+                      />
+                      <span class="budget-separator">-</span>
+                      <input
+                        type="number"
+                        id="budget-max"
+                        class="budget-input"
+                        placeholder="Max"
+                        min="0"
+                      />
+                    </div>
+                    <div class="budget-presets">
+                      <button class="budget-preset" data-min="0" data-max="500">
+                        < 500 DH
+                      </button>
+                      <button class="budget-preset" data-min="500" data-max="1000">
+                        500-1000 DH
+                      </button>
+                      <button class="budget-preset" data-min="1000" data-max="2000">
+                        1000-2000 DH
+                      </button>
+                      <button class="budget-preset" data-min="2000" data-max="">
+                        > 2000 DH
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Availability Filter -->
+                <div class="filter-group">
+                  <h3 class="filter-title" data-i18n="search.filters.availability">Availability</h3>
+                  <div class="availability-filter">
+                    <label class="checkbox-label">
+                      <input type="checkbox" id="available-now" />
+                      <span class="checkmark"></span>
+                      <span data-i18n="search.filters.availableNow">Available Now</span>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Filter Actions -->
+                <div class="filter-actions">
+                  <button id="apply-filters" class="btn btn-primary">
+                    <span data-i18n="search.filters.apply">Apply Filters</span>
+                  </button>
+                  <button id="clear-filters" class="btn btn-secondary">
+                    <span data-i18n="search.filters.clear">Clear All</span>
+                  </button>
+                </div>
+              </div>
+            </aside>
+
+            <!-- Search Results -->
+            <section class="results-container">
+              <!-- Results Header -->
+              <div class="results-header">
+                <div class="results-count">
+                  <span id="results-count">0</span>
+                  <span data-i18n="search.results.found">professionals found</span>
+                </div>
+                <div class="results-sort">
+                  <label for="sort-select" data-i18n="search.results.sortBy">Sort by:</label>
+                  <select id="sort-select" class="sort-select">
+                    <option value="rating" data-i18n="search.results.sortRating">Rating (High to Low)</option>
+                    <option value="price-asc" data-i18n="search.results.sortPriceAsc">Price (Low to High)</option>
+                    <option value="price-desc" data-i18n="search.results.sortPriceDesc">Price (High to Low)</option>
+                    <option value="distance" data-i18n="search.results.sortDistance">Distance</option>
+                    <option value="reviews" data-i18n="search.results.sortReviews">Most Reviews</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Results Content -->
+              <div id="results-content" class="results-content">
+                <!-- List View -->
+                <div id="list-view" class="list-view">
+                  <!-- Artisan cards populated by JS -->
+                </div>
+
+                <!-- Map View -->
+                <div id="map-view" class="map-view hidden">
+                  <div class="map-placeholder">
+                    <svg class="map-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 4m0 13V4m0 0L9 7"></path>
+                    </svg>
+                    <h3 data-i18n="search.map.comingSoon">Map View Coming Soon</h3>
+                    <p data-i18n="search.map.description">Map integration will be available in a future update.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Loading State -->
+              <div id="loading-state" class="loading-state hidden">
+                <div class="loading-spinner"></div>
+                <p data-i18n="search.loading">Loading professionals...</p>
+              </div>
+
+              <!-- No Results State -->
+              <div id="no-results" class="no-results hidden">
+                <svg class="no-results-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <h3 data-i18n="search.noResults.title">No professionals found</h3>
+                <p data-i18n="search.noResults.description">
+                  Try adjusting your search criteria or filters
+                </p>
+                <button id="clear-search" class="btn btn-primary">
+                  <span data-i18n="search.noResults.clearSearch">Clear Search</span>
+                </button>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+
+      <!-- Contact Modal -->
+      <div id="contact-modal" class="modal hidden">
+        <div class="modal-backdrop" id="modal-backdrop"></div>
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 data-i18n="contact.modal.title">Contact Professional</h2>
+            <button id="modal-close" class="modal-close" aria-label="Close modal">×</button>
+          </div>
+          <div class="modal-body">
+            <form id="contact-form" class="contact-form">
+              <input type="hidden" id="artisan-id" name="artisanId" />
+              
+              <div class="form-group">
+                <label for="contact-name" data-i18n="contact.modal.name">Your Name</label>
+                <input
+                  type="text"
+                  id="contact-name"
+                  name="name"
+                  required
+                  data-i18n-placeholder="contact.modal.namePlaceholder"
+                  placeholder="John Doe"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="contact-phone" data-i18n="contact.modal.phone">Phone Number</label>
+                <input
+                  type="tel"
+                  id="contact-phone"
+                  name="phone"
+                  required
+                  data-i18n-placeholder="contact.modal.phonePlaceholder"
+                  placeholder="+212 6XX XXX XXX"
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="contact-message" data-i18n="contact.modal.message">Message</label>
+                <textarea
+                  id="contact-message"
+                  name="message"
+                  rows="4"
+                  required
+                  data-i18n-placeholder="contact.modal.messagePlaceholder"
+                  placeholder="Describe your service needs..."
+                ></textarea>
+              </div>
+
+              <div class="modal-actions">
+                <button type="button" id="modal-cancel" class="btn btn-secondary">
+                  <span data-i18n="contact.modal.cancel">Cancel</span>
+                </button>
+                <button type="submit" class="btn btn-primary">
+                  <span data-i18n="contact.modal.send">Send Message</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="/scripts/landing.js"></script>
+    <script src="/scripts/search.js"></script>
+  </body>
+</html>
