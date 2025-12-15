@@ -11,6 +11,9 @@ const serviceCategoriesRoutes = require('./routes/serviceCategories');
 const artisansRoutes = require('./routes/artisans');
 const clientRequestsRoutes = require('./routes/clientRequests');
 
+const { registerArtisan } = require('./controllers/artisanController');
+const { validateArtisanRegistration } = require('./middleware/validation');
+
 const app = express();
 
 const PORT = process.env.PORT || 3000;
@@ -87,6 +90,8 @@ app.get('/api', (req, res) => {
 app.use('/api/services', serviceCategoriesRoutes);
 app.use('/api/artisans', artisansRoutes);
 app.use('/api/demandes', clientRequestsRoutes);
+
+app.post('/artisan/register', validateArtisanRegistration, registerArtisan);
 
 // Route pour la compatibilité avec l'ancienne structure
 app.use('/api/client-requests', clientRequestsRoutes);
