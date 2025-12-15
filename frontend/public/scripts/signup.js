@@ -585,6 +585,11 @@ class SignupWizard {
     this.submitBtn.disabled = true;
     this.backBtn.disabled = true;
 
+    // Add spinner
+    const spinner = document.createElement('span');
+    spinner.className = 'spinner';
+    this.submitBtn.appendChild(spinner);
+
     const payload = this.buildPayload();
 
     try {
@@ -597,6 +602,27 @@ class SignupWizard {
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
+        if (data?.details && Array.isArray(data.details)) {
+          const errors = {};
+          data.details.forEach(detail => {
+            let field = detail.field;
+            // Map backend fields to frontend fields
+            if (field.startsWith('categories')) field = 'category';
+            if (field === 'description') field = 'bio';
+            
+            // For backend errors, we use the message directly as it might be specific
+            // If the key exists in our inputs, we map it
+            if (this.inputs[field] || field === 'smsCode') {
+               errors[field] = detail.message;
+            }
+          });
+          
+          this.setErrors(errors);
+          
+          // Find which step has the error to navigate there?
+          // For now, just display the error on the field (if visible) and global message
+        }
+
         const message = data?.error || this.translate('signup.status.submitError');
         this.setFormStatusText(message, 'error');
         return;
@@ -607,12 +633,21 @@ class SignupWizard {
 
       this.autosaveEnabled = false;
       localStorage.removeItem(SIGNUP_STORAGE_KEY);
+      
+      // Redirect to search page
+      setTimeout(() => {
+        window.location.href = 'search.html';
+      }, 1500);
+
     } catch (error) {
       console.error('Submit error:', error);
       this.setFormStatus({ key: 'signup.status.networkError', type: 'error' });
     } finally {
       this.submitBtn.disabled = false;
       this.backBtn.disabled = this.getCurrentStep() === 1;
+      if (this.submitBtn.contains(spinner)) {
+        this.submitBtn.removeChild(spinner);
+      }
     }
   }
 
