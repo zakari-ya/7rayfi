@@ -165,6 +165,16 @@ const searchArtisans = async (req, res) => {
 // Inscrire un nouvel artisan
 const registerArtisan = async (req, res) => {
   try {
+    console.log('📝 Nouvelle inscription artisan - Données reçues:', {
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      phone: req.body.phone,
+      profession: req.body.profession,
+      categoriesCount: req.body.categories?.length,
+      city: req.body.city,
+    });
+    
     const {
       firstName,
       lastName,
@@ -184,6 +194,7 @@ const registerArtisan = async (req, res) => {
     // Vérifier si l'email existe déjà
     const existingArtisan = await Artisan.findOne({ email: email.toLowerCase() });
     if (existingArtisan) {
+      console.log('⚠️ Email déjà existant:', email);
       return res.status(409).json({
         success: false,
         error: 'Un artisan avec cette adresse email existe déjà',
@@ -191,12 +202,15 @@ const registerArtisan = async (req, res) => {
     }
     
     // Vérifier si les catégories existent
+    console.log('🔍 Vérification des catégories:', categories);
     const validCategories = await ServiceCategory.find({
       _id: { $in: categories },
       isActive: true,
     });
+    console.log('✅ Catégories valides trouvées:', validCategories.length);
     
     if (validCategories.length !== categories.length) {
+      console.log('⚠️ Catégories invalides - attendues:', categories.length, 'trouvées:', validCategories.length);
       return res.status(400).json({
         success: false,
         error: 'Une ou plusieurs catégories sont invalides',
@@ -228,13 +242,16 @@ const registerArtisan = async (req, res) => {
     // Populate les catégories pour la réponse
     await artisan.populate('categories', 'name slug');
     
+    console.log('✅ Artisan créé avec succès:', artisan._id);
+    
     res.status(201).json({
       success: true,
       data: artisan,
       message: 'Artisan enregistré avec succès',
     });
   } catch (error) {
-    console.error('Erreur lors de l\'enregistrement de l\'artisan:', error);
+    console.error('❌ Erreur lors de l\'enregistrement de l\'artisan:', error);
+    console.error('Stack trace:', error.stack);
     
     if (error.name === 'ValidationError') {
       const validationErrors = Object.values(error.errors).map(err => ({
