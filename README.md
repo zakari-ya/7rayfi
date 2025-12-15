@@ -48,23 +48,18 @@ npm install
 
 This will install dependencies for the root workspace and all child workspaces (backend and frontend).
 
-### 3. Configure environment variables
+### 3. Set up environment variables
 
-Copy the `.env.example` file to `.env` and update the values:
+Copy the environment variables template and update with your settings:
 
 ```bash
 cp .env.example .env
 ```
 
-Edit `.env` with your configuration:
-
-```env
-PORT=3000
-NODE_ENV=development
-MONGODB_URI=mongodb://localhost:27017/7rayfi
-FRONTEND_URL=http://localhost:3001
-API_BASE_URL=http://localhost:3000
-```
+Update the following variables in `.env`:
+- `MONGODB_URI`: Your MongoDB connection string
+- `PORT`: Backend server port (default: 3000)
+- `FRONTEND_PORT`: Frontend server port (default: 8080)
 
 ### 4. Start development servers
 
@@ -98,6 +93,34 @@ This will start both:
 ### Frontend
 
 - `npm run dev --workspace=frontend` - Serve static files with http-server
+
+## Frontend Features
+
+### Search UI (`/search.html`)
+
+The search interface provides comprehensive service discovery with the following features:
+
+#### Key Components
+- **Smart Search Bar**: Debounced input with autocomplete suggestions
+- **Advanced Filters**: Profession, city, rating, budget, availability
+- **Dual View Modes**: List view and map view (map stub)
+- **Contact Modal**: Direct communication with professionals
+- **Persistent Storage**: Recent searches and filter presets via LocalStorage
+
+#### Navigation Integration
+- Landing page toggle redirects to `/search.html?mode=find`
+- Seamless navigation between landing and search pages
+- Browser history support with URL parameters
+
+#### Supported Languages
+- Full internationalization (EN/FR/AR) with RTL support
+- Dynamic translation updates across all components
+
+#### Technical Features
+- Client-side filtering and sorting
+- Responsive design (mobile-first approach)
+- Accessibility compliant (ARIA labels, keyboard navigation)
+- Mock data integration (ready for API connection)
 
 ## API Endpoints
 

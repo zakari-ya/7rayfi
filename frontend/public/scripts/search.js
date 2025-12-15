@@ -1,0 +1,1012 @@
+// Search Page JavaScript
+
+// Mock data for testing (replace with API integration later)
+const mockArtisans = [
+  {
+    id: '1',
+    name: 'Ahmed Benali',
+    profession: 'Plombier',
+    city: 'Casablanca',
+    rating: 4.8,
+    reviewCount: 127,
+    description: 'Plombier expérimenté avec 15 ans d\'expérience. Spécialisé dans les réparations d\'urgence et installations.',
+    skills: ['Réparations', 'Installations', 'Dépannage 24h', 'Chauffage'],
+    priceRange: { min: 200, max: 800 },
+    availability: 'available',
+    avatar: 'AB',
+    distance: 2.3
+  },
+  {
+    id: '2',
+    name: 'Fatima Alami',
+    profession: 'Électricienne',
+    city: 'Rabat',
+    rating: 4.9,
+    reviewCount: 89,
+    description: 'Électricienne certifiée avec expertise en installations résidentielles et commerciales.',
+    skills: ['Installations', 'Tableau électrique', 'Éclairage LED', 'Sécurité'],
+    priceRange: { min: 300, max: 1200 },
+    availability: 'available',
+    avatar: 'FA',
+    distance: 1.8
+  },
+  {
+    id: '3',
+    name: 'Mohamed Tazi',
+    profession: 'Menuisier',
+    city: 'Marrakech',
+    rating: 4.7,
+    reviewCount: 156,
+    description: 'Menuisier qualifié pour tous vos projets de bois sur mesure et rénovations.',
+    skills: ['Mobilier sur mesure', 'Rénovation', 'Escaliers', 'Cuisine'],
+    priceRange: { min: 500, max: 2000 },
+    availability: 'busy',
+    avatar: 'MT',
+    distance: 5.2
+  },
+  {
+    id: '4',
+    name: 'Aicha Bennani',
+    profession: 'Nettoyage',
+    city: 'Casablanca',
+    rating: 4.6,
+    reviewCount: 203,
+    description: 'Service de nettoyage professionnel pour particuliers et entreprises.',
+    skills: ['Nettoyage résidentiel', 'Bureaux', 'Vitrerie', 'Désinfection'],
+    priceRange: { min: 150, max: 600 },
+    availability: 'available',
+    avatar: 'AB',
+    distance: 3.1
+  },
+  {
+    id: '5',
+    name: 'Youssef Idrissi',
+    profession: 'Peintre',
+    city: 'Fès',
+    rating: 4.5,
+    reviewCount: 78,
+    description: 'Peintre professionnel spécialisé dans la décoration et rénovation.',
+    skills: ['Décoration', 'Ravalement', 'Papier peint', 'Finitions'],
+    priceRange: { min: 250, max: 1000 },
+    availability: 'available',
+    avatar: 'YI',
+    distance: 4.7
+  },
+  {
+    id: '6',
+    name: 'Khadija Fassi',
+    profession: 'Couturière',
+    city: 'Tanger',
+    rating: 4.8,
+    reviewCount: 145,
+    description: 'Couturière experte en confection sur mesure et retouches.',
+    skills: ['Sur mesure', 'Retouches', 'Mariage', 'Costumes'],
+    priceRange: { min: 100, max: 500 },
+    availability: 'busy',
+    avatar: 'KF',
+    distance: 6.8
+  },
+  {
+    id: '7',
+    name: 'Omar Cherkaoui',
+    profession: 'Jardinier',
+    city: 'Marrakech',
+    rating: 4.4,
+    reviewCount: 92,
+    description: 'Jardinier paysagiste pour l\'aménagement et l\'entretien de vos espaces verts.',
+    skills: ['Paysagisme', 'Entretien', 'Élagage', 'Irrigation'],
+    priceRange: { min: 200, max: 800 },
+    availability: 'available',
+    avatar: 'OC',
+    distance: 8.2
+  },
+  {
+    id: '8',
+    name: 'Laila Chraibi',
+    profession: 'Infirmière',
+    city: 'Casablanca',
+    rating: 4.9,
+    reviewCount: 167,
+    description: 'Infirmière à domicile pour soins et assistance médical.',
+    skills: ['Soins à domicile', 'Médication', 'Surveillance', 'Réadaptation'],
+    priceRange: { min: 300, max: 600 },
+    availability: 'available',
+    avatar: 'LC',
+    distance: 1.5
+  }
+];
+
+const professions = [
+  'Plombier', 'Électricien', 'Menuisier', 'Peintre', 'Couturière', 
+  'Jardinier', 'Infirmière', 'Maçon', 'Carreleur', 'Plâtrier'
+];
+
+const cities = [
+  'Casablanca', 'Rabat', 'Marrakech', 'Fès', 'Tanger', 'Agadir', 
+  'Meknès', 'Oujda', 'Kenitra', 'Tetouan'
+];
+
+class SearchManager {
+  constructor() {
+    this.currentResults = [...mockArtisans];
+    this.filteredResults = [...mockArtisans];
+    this.currentView = 'list';
+    this.currentFilters = {
+      search: '',
+      profession: '',
+      city: '',
+      rating: '',
+      budgetMin: '',
+      budgetMax: '',
+      availableNow: false
+    };
+    this.sortBy = 'rating';
+    this.debounceTimer = null;
+    
+    this.init();
+  }
+
+  init() {
+    this.loadSavedFilters();
+    this.setupEventListeners();
+    this.populateFilterOptions();
+    this.renderResults();
+    this.updateResultsCount();
+  }
+
+  loadSavedFilters() {
+    const saved = localStorage.getItem('searchFilters');
+    if (saved) {
+      this.currentFilters = { ...this.currentFilters, ...JSON.parse(saved) };
+      this.applySavedFilters();
+    }
+  }
+
+  saveFilters() {
+    localStorage.setItem('searchFilters', JSON.stringify(this.currentFilters));
+  }
+
+  applySavedFilters() {
+    // Apply saved filters to form elements
+    document.getElementById('profession-filter').value = this.currentFilters.profession;
+    document.getElementById('city-filter').value = this.currentFilters.city;
+    document.getElementById('budget-min').value = this.currentFilters.budgetMin;
+    document.getElementById('budget-max').value = this.currentFilters.budgetMax;
+    document.getElementById('available-now').checked = this.currentFilters.availableNow;
+    
+    const ratingRadio = document.querySelector(`input[name="rating"][value="${this.currentFilters.rating}"]`);
+    if (ratingRadio) ratingRadio.checked = true;
+  }
+
+  populateFilterOptions() {
+    // Populate profession filter
+    const professionSelect = document.getElementById('profession-filter');
+    professions.forEach(profession => {
+      const option = document.createElement('option');
+      option.value = profession;
+      option.textContent = profession;
+      professionSelect.appendChild(option);
+    });
+
+    // Populate city filter
+    const citySelect = document.getElementById('city-filter');
+    cities.forEach(city => {
+      const option = document.createElement('option');
+      option.value = city;
+      option.textContent = city;
+      citySelect.appendChild(option);
+    });
+  }
+
+  setupEventListeners() {
+    // Search input with debouncing
+    const searchInput = document.getElementById('search-input');
+    searchInput.addEventListener('input', (e) => {
+      this.debounce(() => {
+        this.currentFilters.search = e.target.value;
+        this.applyFilters();
+      }, 300);
+    });
+
+    // Search suggestions
+    searchInput.addEventListener('input', () => this.showSuggestions());
+    searchInput.addEventListener('blur', () => this.hideSuggestions());
+    searchInput.addEventListener('keydown', (e) => this.handleSuggestionKeydown(e));
+
+    // Filter event listeners
+    document.getElementById('profession-filter').addEventListener('change', (e) => {
+      this.currentFilters.profession = e.target.value;
+      this.applyFilters();
+    });
+
+    document.getElementById('city-filter').addEventListener('change', (e) => {
+      this.currentFilters.city = e.target.value;
+      this.applyFilters();
+    });
+
+    document.querySelectorAll('input[name="rating"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        this.currentFilters.rating = e.target.value;
+        this.applyFilters();
+      });
+    });
+
+    document.getElementById('budget-min').addEventListener('input', (e) => {
+      this.currentFilters.budgetMin = e.target.value;
+      this.applyFilters();
+    });
+
+    document.getElementById('budget-max').addEventListener('input', (e) => {
+      this.currentFilters.budgetMax = e.target.value;
+      this.applyFilters();
+    });
+
+    document.getElementById('available-now').addEventListener('change', (e) => {
+      this.currentFilters.availableNow = e.target.checked;
+      this.applyFilters();
+    });
+
+    // Budget presets
+    document.querySelectorAll('.budget-preset').forEach(preset => {
+      preset.addEventListener('click', (e) => {
+        const min = e.target.dataset.min;
+        const max = e.target.dataset.max;
+        document.getElementById('budget-min').value = min;
+        document.getElementById('budget-max').value = max;
+        this.currentFilters.budgetMin = min;
+        this.currentFilters.budgetMax = max;
+        this.applyFilters();
+      });
+    });
+
+    // Sort dropdown
+    document.getElementById('sort-select').addEventListener('change', (e) => {
+      this.sortBy = e.target.value;
+      this.sortResults();
+      this.renderResults();
+    });
+
+    // View toggle
+    document.querySelectorAll('.view-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        this.switchView(e.target.dataset.view);
+      });
+    });
+
+    // Filter actions
+    document.getElementById('apply-filters').addEventListener('click', () => {
+      this.applyFilters();
+    });
+
+    document.getElementById('clear-filters').addEventListener('click', () => {
+      this.clearFilters();
+    });
+
+    // Mobile filters toggle
+    document.getElementById('toggle-filters').addEventListener('click', () => {
+      this.toggleFilters();
+    });
+
+    // No results actions
+    document.getElementById('clear-search').addEventListener('click', () => {
+      this.clearSearch();
+    });
+
+    // Contact modal
+    this.setupModal();
+  }
+
+  setupModal() {
+    const modal = document.getElementById('contact-modal');
+    const closeBtn = document.getElementById('modal-close');
+    const cancelBtn = document.getElementById('modal-cancel');
+    const backdrop = document.getElementById('modal-backdrop');
+    const form = document.getElementById('contact-form');
+
+    closeBtn.addEventListener('click', () => this.hideModal());
+    cancelBtn.addEventListener('click', () => this.hideModal());
+    backdrop.addEventListener('click', () => this.hideModal());
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      this.submitContactForm();
+    });
+
+    // Close modal on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+        this.hideModal();
+      }
+    });
+  }
+
+  debounce(func, wait) {
+    clearTimeout(this.debounceTimer);
+    this.debounceTimer = setTimeout(func, wait);
+  }
+
+  showSuggestions() {
+    const searchTerm = document.getElementById('search-input').value.toLowerCase();
+    const suggestionsContainer = document.getElementById('search-suggestions');
+    
+    if (!searchTerm || searchTerm.length < 2) {
+      suggestionsContainer.classList.add('hidden');
+      return;
+    }
+
+    const suggestions = this.generateSuggestions(searchTerm);
+    
+    if (suggestions.length === 0) {
+      suggestionsContainer.classList.add('hidden');
+      return;
+    }
+
+    suggestionsContainer.innerHTML = suggestions
+      .map(suggestion => `
+        <div class="suggestion-item" data-type="${suggestion.type}" data-value="${suggestion.value}">
+          <div class="suggestion-text">${suggestion.text}</div>
+          <div class="suggestion-category">${suggestion.category}</div>
+        </div>
+      `)
+      .join('');
+
+    suggestionsContainer.classList.remove('hidden');
+
+    // Add click listeners to suggestions
+    suggestionsContainer.querySelectorAll('.suggestion-item').forEach(item => {
+      item.addEventListener('click', () => {
+        this.selectSuggestion(item);
+      });
+    });
+  }
+
+  generateSuggestions(searchTerm) {
+    const suggestions = [];
+
+    // Search in professions
+    professions.forEach(profession => {
+      if (profession.toLowerCase().includes(searchTerm)) {
+        suggestions.push({
+          type: 'profession',
+          value: profession,
+          text: profession,
+          category: 'Profession'
+        });
+      }
+    });
+
+    // Search in cities
+    cities.forEach(city => {
+      if (city.toLowerCase().includes(searchTerm)) {
+        suggestions.push({
+          type: 'city',
+          value: city,
+          text: city,
+          category: 'City'
+        });
+      }
+    });
+
+    // Search in artisan names
+    mockArtisans.forEach(artisan => {
+      if (artisan.name.toLowerCase().includes(searchTerm)) {
+        suggestions.push({
+          type: 'artisan',
+          value: artisan.name,
+          text: artisan.name,
+          category: artisan.profession
+        });
+      }
+    });
+
+    // Search in skills
+    mockArtisans.forEach(artisan => {
+      artisan.skills.forEach(skill => {
+        if (skill.toLowerCase().includes(searchTerm)) {
+          suggestions.push({
+            type: 'skill',
+            value: skill,
+            text: skill,
+            category: 'Skill'
+          });
+        }
+      });
+    });
+
+    return suggestions.slice(0, 8); // Limit to 8 suggestions
+  }
+
+  selectSuggestion(item) {
+    const value = item.dataset.value;
+    const type = item.dataset.type;
+    
+    document.getElementById('search-input').value = value;
+    document.getElementById('search-suggestions').classList.add('hidden');
+
+    // Apply specific filter based on suggestion type
+    switch (type) {
+      case 'profession':
+        document.getElementById('profession-filter').value = value;
+        this.currentFilters.profession = value;
+        break;
+      case 'city':
+        document.getElementById('city-filter').value = value;
+        this.currentFilters.city = value;
+        break;
+    }
+
+    this.applyFilters();
+  }
+
+  handleSuggestionKeydown(e) {
+    const suggestions = document.querySelectorAll('.suggestion-item');
+    const highlighted = document.querySelector('.suggestion-item.highlighted');
+    
+    if (suggestions.length === 0) return;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        if (highlighted) {
+          highlighted.classList.remove('highlighted');
+          const next = highlighted.nextElementSibling || suggestions[0];
+          next.classList.add('highlighted');
+        } else {
+          suggestions[0].classList.add('highlighted');
+        }
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        if (highlighted) {
+          highlighted.classList.remove('highlighted');
+          const prev = highlighted.previousElementSibling || suggestions[suggestions.length - 1];
+          prev.classList.add('highlighted');
+        } else {
+          suggestions[suggestions.length - 1].classList.add('highlighted');
+        }
+        break;
+      case 'Enter':
+        if (highlighted) {
+          e.preventDefault();
+          this.selectSuggestion(highlighted);
+        }
+        break;
+      case 'Escape':
+        this.hideSuggestions();
+        break;
+    }
+  }
+
+  hideSuggestions() {
+    setTimeout(() => {
+      document.getElementById('search-suggestions').classList.add('hidden');
+    }, 150);
+  }
+
+  applyFilters() {
+    this.saveFilters();
+    
+    this.filteredResults = this.currentResults.filter(artisan => {
+      // Search filter
+      if (this.currentFilters.search) {
+        const searchTerm = this.currentFilters.search.toLowerCase();
+        const matchesSearch = 
+          artisan.name.toLowerCase().includes(searchTerm) ||
+          artisan.profession.toLowerCase().includes(searchTerm) ||
+          artisan.city.toLowerCase().includes(searchTerm) ||
+          artisan.description.toLowerCase().includes(searchTerm) ||
+          artisan.skills.some(skill => skill.toLowerCase().includes(searchTerm));
+        
+        if (!matchesSearch) return false;
+      }
+
+      // Profession filter
+      if (this.currentFilters.profession && artisan.profession !== this.currentFilters.profession) {
+        return false;
+      }
+
+      // City filter
+      if (this.currentFilters.city && artisan.city !== this.currentFilters.city) {
+        return false;
+      }
+
+      // Rating filter
+      if (this.currentFilters.rating && artisan.rating < parseFloat(this.currentFilters.rating)) {
+        return false;
+      }
+
+      // Budget filter
+      if (this.currentFilters.budgetMin && artisan.priceRange.min < parseFloat(this.currentFilters.budgetMin)) {
+        return false;
+      }
+      
+      if (this.currentFilters.budgetMax && artisan.priceRange.max > parseFloat(this.currentFilters.budgetMax)) {
+        return false;
+      }
+
+      // Availability filter
+      if (this.currentFilters.availableNow && artisan.availability !== 'available') {
+        return false;
+      }
+
+      return true;
+    });
+
+    this.sortResults();
+    this.renderResults();
+    this.updateResultsCount();
+  }
+
+  sortResults() {
+    this.filteredResults.sort((a, b) => {
+      switch (this.sortBy) {
+        case 'rating':
+          return b.rating - a.rating;
+        case 'price-asc':
+          return a.priceRange.min - b.priceRange.min;
+        case 'price-desc':
+          return b.priceRange.max - a.priceRange.max;
+        case 'distance':
+          return a.distance - b.distance;
+        case 'reviews':
+          return b.reviewCount - a.reviewCount;
+        default:
+          return b.rating - a.rating;
+      }
+    });
+  }
+
+  renderResults() {
+    const container = document.getElementById('list-view');
+    
+    if (this.filteredResults.length === 0) {
+      this.showNoResults();
+      return;
+    }
+
+    this.hideNoResults();
+    
+    container.innerHTML = this.filteredResults.map(artisan => this.renderArtisanCard(artisan)).join('');
+    
+    // Add contact button listeners
+    container.querySelectorAll('.contact-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const artisanId = e.target.dataset.artisanId;
+        this.showContactModal(artisanId);
+      });
+    });
+  }
+
+  renderArtisanCard(artisan) {
+    const availabilityClass = artisan.availability === 'available' ? 'available' : 'busy';
+    const availabilityText = artisan.availability === 'available' ? 
+      i18n.translate('search.available') : 
+      i18n.translate('search.busy');
+    
+    return `
+      <div class="artisan-card" data-artisan-id="${artisan.id}">
+        <div class="artisan-avatar">${artisan.avatar}</div>
+        <div class="artisan-info">
+          <div class="artisan-header">
+            <div>
+              <h3 class="artisan-name">${artisan.name}</h3>
+              <p class="artisan-profession">${artisan.profession}</p>
+              <p class="artisan-location">📍 ${artisan.city} • ${artisan.distance}km</p>
+            </div>
+          </div>
+          
+          <div class="artisan-rating">
+            <div class="stars">${'★'.repeat(Math.floor(artisan.rating))}${'☆'.repeat(5 - Math.floor(artisan.rating))}</div>
+            <span class="rating-count">${artisan.rating} (${artisan.reviewCount} reviews)</span>
+          </div>
+          
+          <p class="artisan-description">${artisan.description}</p>
+          
+          <div class="artisan-skills">
+            ${artisan.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
+          </div>
+          
+          <p class="artisan-price">${artisan.priceRange.min} - ${artisan.priceRange.max} DH</p>
+        </div>
+        
+        <div class="artisan-actions">
+          <div class="availability-badge ${availabilityClass}">
+            ${availabilityText}
+          </div>
+          <button class="contact-btn" data-artisan-id="${artisan.id}">
+            ${i18n.translate('search.contact')}
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  showNoResults() {
+    document.getElementById('no-results').classList.remove('hidden');
+    document.getElementById('list-view').classList.add('hidden');
+  }
+
+  hideNoResults() {
+    document.getElementById('no-results').classList.add('hidden');
+    document.getElementById('list-view').classList.remove('hidden');
+  }
+
+  updateResultsCount() {
+    const count = this.filteredResults.length;
+    const countElement = document.getElementById('results-count');
+    
+    if (i18n && typeof i18n.translate === 'function') {
+      countElement.textContent = count;
+      countElement.nextElementSibling.textContent = count === 1 ? 
+        i18n.translate('search.results.found') : 
+        `${count} ${i18n.translate('search.results.found')}`;
+    } else {
+      countElement.textContent = count;
+      countElement.nextElementSibling.textContent = count === 1 ? 'professional found' : 'professionals found';
+    }
+  }
+
+  switchView(view) {
+    this.currentView = view;
+    
+    // Update toggle buttons
+    document.querySelectorAll('.view-btn').forEach(btn => {
+      const isActive = btn.dataset.view === view;
+      btn.classList.toggle('active', isActive);
+      btn.setAttribute('aria-pressed', isActive);
+    });
+
+    // Show/hide views
+    const listView = document.getElementById('list-view');
+    const mapView = document.getElementById('map-view');
+    
+    if (view === 'list') {
+      listView.classList.remove('hidden');
+      mapView.classList.add('hidden');
+    } else {
+      listView.classList.add('hidden');
+      mapView.classList.remove('hidden');
+    }
+  }
+
+  clearFilters() {
+    this.currentFilters = {
+      search: '',
+      profession: '',
+      city: '',
+      rating: '',
+      budgetMin: '',
+      budgetMax: '',
+      availableNow: false
+    };
+
+    // Reset form elements
+    document.getElementById('search-input').value = '';
+    document.getElementById('profession-filter').value = '';
+    document.getElementById('city-filter').value = '';
+    document.getElementById('budget-min').value = '';
+    document.getElementById('budget-max').value = '';
+    document.getElementById('available-now').checked = false;
+    document.querySelector('input[name="rating"][value=""]').checked = true;
+
+    this.applyFilters();
+  }
+
+  clearSearch() {
+    document.getElementById('search-input').value = '';
+    this.currentFilters.search = '';
+    this.applyFilters();
+  }
+
+  toggleFilters() {
+    const sidebar = document.getElementById('filters-sidebar');
+    const toggleBtn = document.getElementById('toggle-filters');
+    
+    sidebar.classList.toggle('hidden');
+    toggleBtn.textContent = sidebar.classList.contains('hidden') ? 
+      i18n.translate('search.filters.show') : 
+      i18n.translate('search.filters.hide');
+  }
+
+  showContactModal(artisanId) {
+    const modal = document.getElementById('contact-modal');
+    const artisan = mockArtisans.find(a => a.id === artisanId);
+    
+    if (!artisan) return;
+
+    // Populate modal with artisan info
+    document.getElementById('artisan-id').value = artisanId;
+    document.querySelector('.modal-header h2').textContent = 
+      `${i18n.translate('contact.modal.title')} - ${artisan.name}`;
+
+    modal.classList.remove('hidden');
+    document.getElementById('contact-name').focus();
+  }
+
+  hideModal() {
+    document.getElementById('contact-modal').classList.add('hidden');
+    document.getElementById('contact-form').reset();
+  }
+
+  async submitContactForm() {
+    const formData = new FormData(document.getElementById('contact-form'));
+    const data = Object.fromEntries(formData.entries());
+    
+    // Validate phone number (Moroccan format)
+    const phoneRegex = /^(\+212|0)[567]\d{8}$/;
+    if (!phoneRegex.test(data.phone)) {
+      alert(i18n.translate('contact.modal.invalidPhone') || 'Please enter a valid Moroccan phone number');
+      return;
+    }
+
+    // Show loading state
+    const submitBtn = document.querySelector('#contact-form button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = i18n.translate('contact.modal.sending') || 'Sending...';
+
+    try {
+      // Mock API call - replace with actual API integration
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
+      console.log('Contact form submitted:', data);
+      
+      // Show success message
+      alert(i18n.translate('contact.modal.success') || 'Message sent successfully!');
+      
+      this.hideModal();
+    } catch (error) {
+      console.error('Error submitting contact form:', error);
+      alert(i18n.translate('contact.modal.error') || 'Failed to send message. Please try again.');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+    }
+  }
+}
+
+// Enhanced translations for search page
+const searchTranslations = {
+  en: {
+    search: {
+      title: 'Search Services',
+      subtitle: 'Find the perfect professional for your needs',
+      placeholder: 'Search for services, professionals...',
+      viewList: 'List',
+      viewMap: 'Map',
+      available: 'Available',
+      busy: 'Busy',
+      contact: 'Contact',
+      loading: 'Loading professionals...',
+      noResults: {
+        title: 'No professionals found',
+        description: 'Try adjusting your search criteria or filters',
+        clearSearch: 'Clear Search'
+      },
+      map: {
+        comingSoon: 'Map View Coming Soon',
+        description: 'Map integration will be available in a future update.'
+      },
+      results: {
+        found: 'professionals found',
+        sortBy: 'Sort by:',
+        sortRating: 'Rating (High to Low)',
+        sortPriceAsc: 'Price (Low to High)',
+        sortPriceDesc: 'Price (High to Low)',
+        sortDistance: 'Distance',
+        sortReviews: 'Most Reviews'
+      },
+      filters: {
+        title: 'Filters',
+        toggle: 'Hide Filters',
+        show: 'Show Filters',
+        profession: 'Profession',
+        allProfessions: 'All Professions',
+        city: 'City',
+        allCities: 'All Cities',
+        rating: 'Minimum Rating',
+        anyRating: 'Any Rating',
+        budget: 'Budget Range',
+        availability: 'Availability',
+        availableNow: 'Available Now',
+        apply: 'Apply Filters',
+        clear: 'Clear All'
+      }
+    },
+    contact: {
+      modal: {
+        title: 'Contact Professional',
+        name: 'Your Name',
+        namePlaceholder: 'John Doe',
+        phone: 'Phone Number',
+        phonePlaceholder: '+212 6XX XXX XXX',
+        message: 'Message',
+        messagePlaceholder: 'Describe your service needs...',
+        cancel: 'Cancel',
+        send: 'Send Message',
+        invalidPhone: 'Please enter a valid Moroccan phone number',
+        sending: 'Sending...',
+        success: 'Message sent successfully!',
+        error: 'Failed to send message. Please try again.'
+      }
+    }
+  },
+  fr: {
+    search: {
+      title: 'Rechercher des Services',
+      subtitle: 'Trouvez le professionnel parfait pour vos besoins',
+      placeholder: 'Rechercher des services, professionnels...',
+      viewList: 'Liste',
+      viewMap: 'Carte',
+      available: 'Disponible',
+      busy: 'Occupé',
+      contact: 'Contacter',
+      loading: 'Chargement des professionnels...',
+      noResults: {
+        title: 'Aucun professionnel trouvé',
+        description: 'Essayez d\'ajuster vos critères de recherche ou filtres',
+        clearSearch: 'Effacer la Recherche'
+      },
+      map: {
+        comingSoon: 'Vue Carte Bientôt Disponible',
+        description: 'L\'intégration de carte sera disponible dans une future mise à jour.'
+      },
+      results: {
+        found: 'professionnels trouvés',
+        sortBy: 'Trier par:',
+        sortRating: 'Note (Du Plus Élevé au Plus Faible)',
+        sortPriceAsc: 'Prix (Du Plus Faible au Plus Élevé)',
+        sortPriceDesc: 'Prix (Du Plus Élevé au Plus Faible)',
+        sortDistance: 'Distance',
+        sortReviews: 'Plus d\'Avis'
+      },
+      filters: {
+        title: 'Filtres',
+        toggle: 'Masquer les Filtres',
+        show: 'Afficher les Filtres',
+        profession: 'Profession',
+        allProfessions: 'Toutes les Professions',
+        city: 'Ville',
+        allCities: 'Toutes les Villes',
+        rating: 'Note Minimale',
+        anyRating: 'Toutes les Notes',
+        budget: 'Gamme de Prix',
+        availability: 'Disponibilité',
+        availableNow: 'Disponible Maintenant',
+        apply: 'Appliquer les Filtres',
+        clear: 'Tout Effacer'
+      }
+    },
+    contact: {
+      modal: {
+        title: 'Contacter le Professionnel',
+        name: 'Votre Nom',
+        namePlaceholder: 'Jean Dupont',
+        phone: 'Numéro de Téléphone',
+        phonePlaceholder: '+212 6XX XXX XXX',
+        message: 'Message',
+        messagePlaceholder: 'Décrivez vos besoins en service...',
+        cancel: 'Annuler',
+        send: 'Envoyer le Message',
+        invalidPhone: 'Veuillez entrer un numéro de téléphone marocain valide',
+        sending: 'Envoi...',
+        success: 'Message envoyé avec succès!',
+        error: 'Échec de l\'envoi du message. Veuillez réessayer.'
+      }
+    }
+  },
+  ar: {
+    search: {
+      title: 'البحث عن الخدمات',
+      subtitle: 'اعثر على المحترف المثالي لاحتياجاتك',
+      placeholder: 'ابحث عن خدمات، محترفين...',
+      viewList: 'قائمة',
+      viewMap: 'خريطة',
+      available: 'متاح',
+      busy: 'مشغول',
+      contact: 'اتصل',
+      loading: 'تحميل المحترفين...',
+      noResults: {
+        title: 'لم يتم العثور على محترفين',
+        description: 'حاول تعديل معايير البحث أو المرشحات',
+        clearSearch: 'مسح البحث'
+      },
+      map: {
+        comingSoon: 'عرض الخريطة قريباً',
+        description: 'سيكون تكامل الخريطة متاحاً في تحديث مستقبلي.'
+      },
+      results: {
+        found: 'محترفون موجودون',
+        sortBy: 'ترتيب حسب:',
+        sortRating: 'التقييم (من الأعلى للأقل)',
+        sortPriceAsc: 'السعر (من الأقل للأعلى)',
+        sortPriceDesc: 'السعر (من الأعلى للأقل)',
+        sortDistance: 'المسافة',
+        sortReviews: 'أكثر المراجعات'
+      },
+      filters: {
+        title: 'المرشحات',
+        toggle: 'إخفاء المرشحات',
+        show: 'إظهار المرشحات',
+        profession: 'المهنة',
+        allProfessions: 'جميع المهن',
+        city: 'المدينة',
+        allCities: 'جميع المدن',
+        rating: 'الحد الأدنى للتقييم',
+        anyRating: 'أي تقييم',
+        budget: 'نطاق الميزانية',
+        availability: 'التوفر',
+        availableNow: 'متاح الآن',
+        apply: 'تطبيق المرشحات',
+        clear: 'مسح الكل'
+      }
+    },
+    contact: {
+      modal: {
+        title: 'اتصل بالمحترف',
+        name: 'اسمك',
+        namePlaceholder: 'أحمد محمد',
+        phone: 'رقم الهاتف',
+        phonePlaceholder: '+212 6XX XXX XXX',
+        message: 'الرسالة',
+        messagePlaceholder: 'اشرح احتياجاتك للخدمة...',
+        cancel: 'إلغاء',
+        send: 'إرسال الرسالة',
+        invalidPhone: 'يرجى إدخال رقم هاتف مغربي صحيح',
+        sending: 'جاري الإرسال...',
+        success: 'تم إرسال الرسالة بنجاح!',
+        error: 'فشل في إرسال الرسالة. يرجى المحاولة مرة أخرى.'
+      }
+    }
+  }
+};
+
+// Extend existing translations
+Object.keys(searchTranslations).forEach(lang => {
+  if (translations[lang]) {
+    translations[lang] = { ...translations[lang], ...searchTranslations[lang] };
+  }
+});
+
+// Search Page Initialization
+document.addEventListener('DOMContentLoaded', () => {
+  // Initialize search manager
+  window.searchManager = new SearchManager();
+
+  // Handle navigation from landing page
+  const urlParams = new URLSearchParams(window.location.search);
+  const mode = urlParams.get('mode');
+  
+  if (mode === 'find') {
+    // Focus on search input for find mode
+    setTimeout(() => {
+      document.getElementById('search-input').focus();
+    }, 500);
+  }
+
+  // Update translations when language changes
+  const originalSetLanguage = i18n.setLanguage;
+  i18n.setLanguage = function(lang) {
+    originalSetLanguage.call(this, lang);
+    
+    // Re-render search results with new translations
+    if (window.searchManager) {
+      window.searchManager.renderResults();
+      window.searchManager.updateResultsCount();
+    }
+  };
+
+  // Add some realistic delays for better UX
+  setTimeout(() => {
+    document.querySelector('.search-header').style.opacity = '1';
+    document.querySelector('.search-header').style.transform = 'translateY(0)';
+  }, 100);
+});
+
+// Handle browser back/forward navigation
+window.addEventListener('popstate', () => {
+  if (window.searchManager) {
+    window.searchManager.loadSavedFilters();
+    window.searchManager.applyFilters();
+  }
+});
