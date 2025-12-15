@@ -176,7 +176,7 @@ fi
 # Test 11: Search page loads
 echo "Test 11: Search page (search.html)..."
 SEARCH_CONTENT=$(curl -s $FRONTEND_URL/search.html)
-if echo "$SEARCH_CONTENT" | grep -q "<!DOCTYPE html>"; then
+if echo "$SEARCH_CONTENT" | grep -qi "<!DOCTYPE html>"; then
   test_result "Search page loads" "PASS"
 else
   test_result "Search page loads" "FAIL" "Page not found"
@@ -185,7 +185,7 @@ fi
 # Test 12: Signup page loads
 echo "Test 12: Signup page (signup.html)..."
 SIGNUP_CONTENT=$(curl -s $FRONTEND_URL/signup.html)
-if echo "$SIGNUP_CONTENT" | grep -q "<!DOCTYPE html>"; then
+if echo "$SIGNUP_CONTENT" | grep -qi "<!DOCTYPE html>"; then
   test_result "Signup page loads" "PASS"
 else
   test_result "Signup page loads" "FAIL" "Page not found"
@@ -209,13 +209,13 @@ else
   test_result "CSS files load" "FAIL" "HTTP $CSS_RESPONSE"
 fi
 
-# Test 15: i18n translations load
-echo "Test 15: Translation files accessible..."
-TRANS_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" $FRONTEND_URL/i18n/fr.json)
-if [ "$TRANS_RESPONSE" == "200" ]; then
-  test_result "i18n translation files load" "PASS"
+# Test 15: i18n translations load (Embedded in JS)
+echo "Test 15: Translations available..."
+LANDING_JS=$(curl -s $FRONTEND_URL/scripts/landing.js)
+if echo "$LANDING_JS" | grep -q "const translations ="; then
+  test_result "i18n translations present in JS" "PASS"
 else
-  test_result "i18n translation files load" "FAIL" "HTTP $TRANS_RESPONSE"
+  test_result "i18n translations present in JS" "FAIL" "Translations not found in landing.js"
 fi
 
 # 3. INTEGRATION VALIDATION
