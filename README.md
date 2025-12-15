@@ -101,8 +101,188 @@ This will start both:
 
 ## API Endpoints
 
-- `GET /health` - Health check endpoint
-- `GET /api` - Basic API endpoint
+### Base URL
+```
+http://localhost:3000/api
+```
+
+### Health & Status
+- `GET /health` - Health check endpoint avec statut MongoDB
+- `GET /api` - Informations générales sur l'API
+
+### Categories de Services (`/services`)
+- `GET /api/services` - Récupérer toutes les catégories
+  - **Paramètres de requête:**
+    - `active` (string): Filtrer par statut actif (`true`/`false`/`all`, défaut: `true`)
+    - `sortBy` (string): Champ de tri (`order`, `name`, défaut: `order`)
+    - `sortOrder` (string): Ordre de tri (`asc`/`desc`, défaut: `asc`)
+- `GET /api/services/search` - Rechercher des catégories
+  - **Paramètres de requête:**
+    - `q` (string, requis): Terme de recherche (min. 2 caractères)
+    - `limit` (number): Nombre maximum de résultats (défaut: 10)
+- `GET /api/services/:id` - Récupérer une catégorie par ID
+
+### Artisans (`/artisans`)
+- `GET /api/artisans` - Récupérer tous les artisans avec filtres
+  - **Paramètres de requête:**
+    - `profession` (string): Filtrer par profession
+    - `city` (string): Filtrer par ville
+    - `category` (string): Filtrer par ID de catégorie
+    - `minRating` (number): Note minimum (0-5)
+    - `maxRate` (number): Taux horaire maximum
+    - `availability` (string): Disponibilité (`immediate`, `sous_1_semaine`, `sous_1_mois`, `plus_1_mois`)
+    - `page` (number): Numéro de page (défaut: 1)
+    - `limit` (number): Nombre d'éléments par page (défaut: 20, max: 100)
+    - `sortBy` (string): Critère de tri (`rating`, `createdAt`, `hourlyRate`, `experience`)
+    - `sortOrder` (string): Ordre de tri (`asc`/`desc`)
+- `GET /api/artisans/search` - Rechercher des artisans
+  - **Paramètres de requête:**
+    - `q` (string, requis): Terme de recherche (min. 2 caractères)
+    - `limit` (number): Nombre maximum de résultats (défaut: 20)
+- `GET /api/artisans/stats` - Statistiques des artisans
+- `GET /api/artisans/:id` - Récupérer un artisan par ID
+- `POST /api/artisans` - Inscrire un nouvel artisan
+  - **Corps de la requête (JSON):**
+    ```json
+    {
+      "firstName": "Ahmed",
+      "lastName": "alami",
+      "email": "ahmed@email.com",
+      "phone": "0612345678",
+      "profession": "Plombier",
+      "categories": ["category_id_1", "category_id_2"],
+      "city": "Casablanca",
+      "experience": 5,
+      "hourlyRate": 150,
+      "availability": "immediate",
+      "description": "Description...",
+      "skills": ["Réparation", "Installation"],
+      "smsVerified": false
+    }
+    ```
+- `PUT /api/artisans/:id` - Mettre à jour un artisan
+
+### Demandes Clients (`/demandes`)
+- `GET /api/demandes` - Récupérer toutes les demandes avec filtres
+  - **Paramètres de requête:**
+    - `status` (string): Filtrer par statut (`pending`, `contacted`, `in_progress`, `completed`, `cancelled`)
+    - `city` (string): Filtrer par ville
+    - `serviceCategory` (string): Filtrer par ID de catégorie de service
+    - `priority` (string): Filtrer par priorité (`low`, `medium`, `high`, `urgent`)
+    - `page`, `limit`, `sortBy`, `sortOrder`: Pagination et tri
+- `GET /api/demandes/stats` - Statistiques des demandes
+- `GET /api/demandes/:id` - Récupérer une demande par ID
+- `POST /api/demandes` - Créer une nouvelle demande client
+  - **Alias:** `POST /api/demandes/create`
+  - **Corps de la requête (JSON):**
+    ```json
+    {
+      "clientName": "Hassan Benali",
+      "clientEmail": "hassan@email.com",
+      "clientPhone": "0612345678",
+      "serviceCategory": "category_id",
+      "serviceType": "Réparation",
+      "description": "Description détaillée du service...",
+      "city": "Casablanca",
+      "address": "123 Rue Hassan II",
+      "budget": {
+        "min": 500,
+        "max": 1000,
+        "currency": "MAD"
+      },
+      "deadline": "2024-01-15",
+      "priority": "high",
+      "isUrgent": false,
+      "notes": "Notes additionnelles..."
+    }
+    ```
+- `PUT /api/demandes/:id/status` - Mettre à jour le statut d'une demande
+  - **Corps de la requête:**
+    ```json
+    {
+      "status": "in_progress",
+      "notes": "Notes sur le changement de statut"
+    }
+    ```
+- `POST /api/demandes/:id/contact` - Contacter un artisan pour une demande
+  - **Corps de la requête:**
+    ```json
+    {
+      "artisanId": "artisan_id",
+      "notes": "Message pour l'artisan"
+    }
+    ```
+- `PUT /api/demandes/:id/artisan/:artisanId/status` - Mettre à jour le statut d'un artisan contacté
+  - **Statuts valides:** `pending`, `contacted`, `interested`, `not_interested`
+
+### Codes de Réponse
+- `200` - Succès
+- `201` - Ressource créée avec succès
+- `400` - Données invalides (avec détails des erreurs)
+- `404` - Ressource non trouvée
+- `409` - Conflit (ex: email déjà utilisé)
+- `500` - Erreur serveur interne
+
+### Format de Réponse Standard
+```json
+{
+  "success": true,
+  "data": { ... },
+  "message": "Opération réussie",
+  "pagination": {
+    "current": 1,
+    "pages": 5,
+    "count": 100,
+    "limit": 20
+  },
+  "filters": { ... }
+}
+```
+
+### Gestion d'Erreurs
+```json
+{
+  "success": false,
+  "error": "Message d'erreur descriptif",
+  "details": [
+    {
+      "field": "email",
+      "message": "L'adresse email est requise",
+      "value": ""
+    }
+  ]
+}
+```
+
+### Exemples d'Utilisation
+
+#### Récupérer les artisans à Casablanca avec note >= 4.0
+```bash
+curl "http://localhost:3000/api/artisans?city=Casablanca&minRating=4.0&limit=10"
+```
+
+#### Créer une nouvelle demande client
+```bash
+curl -X POST http://localhost:3000/api/demandes \
+  -H "Content-Type: application/json" \
+  -d '{
+    "clientName": "Hassan Benali",
+    "clientEmail": "hassan@email.com",
+    "clientPhone": "0612345678",
+    "serviceCategory": "plumbing_category_id",
+    "serviceType": "Réparation fuite",
+    "description": "Fuite dans la salle de bain nécessitant une intervention urgente",
+    "city": "Casablanca",
+    "budget": {"min": 300, "max": 800, "currency": "MAD"},
+    "priority": "urgent",
+    "isUrgent": true
+  }'
+```
+
+#### Rechercher des électriciens à Rabat
+```bash
+curl "http://localhost:3000/api/artisans?profession=électricien&city=Rabat&availability=immediate"
+```
 
 ## Technology Stack
 
