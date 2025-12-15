@@ -58,6 +58,10 @@ const artisanSchema = new mongoose.Schema(
       required: [true, 'La ville est requise'],
       trim: true,
     },
+    serviceAreas: [{
+      type: String,
+      trim: true,
+    }],
     address: {
       type: String,
       trim: true,
@@ -79,6 +83,11 @@ const artisanSchema = new mongoose.Schema(
     hourlyRate: {
       type: Number,
       min: [0, 'Le taux horaire ne peut pas être négatif'],
+    },
+    pricingNote: {
+      type: String,
+      trim: true,
+      maxlength: [200, 'La note de tarification ne peut pas dépasser 200 caractères'],
     },
     availability: {
       type: String,
@@ -118,6 +127,10 @@ const artisanSchema = new mongoose.Schema(
       trim: true,
       maxlength: [1000, 'La description ne peut pas dépasser 1000 caractères'],
     },
+    portfolioLinks: [{
+      type: String,
+      trim: true,
+    }],
     portfolio: [{
       title: {
         type: String,

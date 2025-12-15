@@ -65,6 +65,11 @@ const validateArtisanRegistration = [
     .withMessage('La ville est requise')
     .trim(),
   
+  body('serviceAreas')
+    .optional()
+    .isArray()
+    .withMessage('Les zones de service doivent être un tableau'),
+  
   body('experience')
     .optional()
     .isInt({ min: 0, max: 50 })
@@ -74,6 +79,12 @@ const validateArtisanRegistration = [
     .optional()
     .isFloat({ min: 0 })
     .withMessage('Le taux horaire doit être un nombre positif'),
+  
+  body('pricingNote')
+    .optional()
+    .isLength({ max: 200 })
+    .withMessage('La note de tarification ne peut pas dépasser 200 caractères')
+    .trim(),
   
   body('availability')
     .optional()
@@ -85,6 +96,11 @@ const validateArtisanRegistration = [
     .isLength({ max: 1000 })
     .withMessage('La description ne peut pas dépasser 1000 caractères')
     .trim(),
+  
+  body('portfolioLinks')
+    .optional()
+    .isArray()
+    .withMessage('Les liens portfolio doivent être un tableau'),
   
   body('skills')
     .optional()
